@@ -161,3 +161,11 @@ def angle_to_target(commonX, commonY, frontX, frontY, targetX, targetY):
 		return np.add(totalAngle, 360.0)
 
 	return totalAngle
+
+def is_intersecting(centerX1, centerY1, centerX2, centerY2, THRESHOLD):
+
+	dist = get_euclidean_distance(centerX1, centerY1, centerX2, centerY2)
+
+	if dist <= THRESHOLD:
+		return True
+	return False

@@ -14,7 +14,7 @@ SHAPE_RESIZE = 100.0
 BLACK_THRESHOLD = 50
 WHITE_THRESHOLD = 100
 
-#Visual
+# VISUAL CONFIGURATION
 FONT_BIG = cv2.FONT_HERSHEY_SIMPLEX	
 TEXT_SIZE_BIG = 0.6
 DIMENSIONS_COLOR = (0, 255, 0)
@@ -25,6 +25,9 @@ DOT_SIZE = 7
 # Initialize Webcam thread
 webcam = Webcam(camera)
 webcam.start()
+
+# auxiliar constants
+INTERSECTION_THRESHOLD = 2 * ROBOT_RADIUS
 
 try:
 	while True:
