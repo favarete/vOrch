@@ -146,3 +146,18 @@ def get_collision_point(x1, y1, x2, y2, dist):
 	Y = int(np.add(y1, np.multiply(dist, ( np.divide(np.subtract(y2, y1), AB) ))) )
 
 	return X, Y
+
+def angle_to_target(commonX, commonY, frontX, frontY, targetX, targetY):
+
+	frontAngle = np.rad2deg( np.arctan2( np.subtract(frontY, commonY), np.subtract(frontX, commonX) ))
+	targetAngle = np.rad2deg( np.arctan2( np.subtract(targetY, commonY), np.subtract(targetX, commonX) ))
+
+	totalAngle = np.subtract(targetAngle, frontAngle)
+
+	if totalAngle > 180.0:
+		return np.subtract(totalAngle, 360.0)
+
+	if totalAngle < 180.0:
+		return np.add(totalAngle, 360.0)
+
+	return totalAngle
