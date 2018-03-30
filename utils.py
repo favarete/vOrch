@@ -169,3 +169,18 @@ def is_intersecting(centerX1, centerY1, centerX2, centerY2, THRESHOLD):
 	if dist <= THRESHOLD:
 		return True
 	return False
+
+def get_collision_points(centerX1, centerY1, centerX2, centerY2, RADIUS):
+
+	dist = get_euclidean_distance(centerX1, centerY1, centerX2, centerY2)
+	h = np.sqrt( np.subtract(np.square(RADIUS), np.square(np.divide(dist, 2.0))) )
+
+	centerIntersectionX = np.divide(np.add(centerX1, centerX2), 2.0)
+	centerIntersectionY = np.divide(np.add(centerY1, centerY2), 2.0)
+
+	interX1 = np.add( centerIntersectionX, np.divide( np.multiply(np.subtract(centerY1, centerY2), h), dist ) )
+	interX2 = np.subtract( centerIntersectionX, np.divide( np.multiply(np.subtract(centerY1, centerY2), h), dist ) )
+	interY1 = np.subtract( centerIntersectionY, np.divide( np.multiply(np.subtract(centerX1, centerX2), h), dist ) )
+	interY2 = np.add( centerIntersectionY, np.divide( np.multiply(np.subtract(centerX1, centerX2), h), dist ) )
+
+	return interX1, interX2, interY1, interY2
