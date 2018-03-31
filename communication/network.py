@@ -3,7 +3,7 @@ import urllib2
 import socket
 import register
 
-CACHE_ADRESS = "communication/cache.txt"
+CACHE_ADDRESS = "communication/cache.txt"
 
 class SendCommand():
 
@@ -52,7 +52,7 @@ class Server():
 
         robots = []
         cache = register.ReadFile()
-        ips = cache.getContentNoDupLn(CACHE_ADRESS)
+        ips = cache.getContentNoDupLn(CACHE_ADDRESS)
         i = 0
         q = 0
 
@@ -65,7 +65,7 @@ class Server():
                 html = html.split('-')
                 robot = SendCommand(html[0],html[1])
                 self.robots.append(robot)
-                cache = register.WriteFile(CACHE_ADRESS)
+                cache = register.WriteFile(CACHE_ADDRESS)
                 cache.println(html[1])
                 q = q+1
 
@@ -97,7 +97,7 @@ class Server():
                 html = html.split('-')
                 robot = SendCommand(html[0],html[1])
                 self.robots.append(robot)
-                cache = register.WriteFile(CACHE_ADRESS)
+                cache = register.WriteFile(CACHE_ADDRESS)
                 cache.println(html[1])
                 q = q+1
                 if(q==robotsAvailable):
