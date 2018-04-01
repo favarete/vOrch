@@ -138,7 +138,7 @@ def get_euclidean_distance(x1, y1, x2, y2):
 
 	return np.sqrt( np.add(np.square(np.subtract(x2, x1)), np.square(np.subtract(y1, y2))) )
 
-def get_collision_point(x1, y1, x2, y2, dist):
+def get_extended_point(x1, y1, x2, y2, dist):
 	
 	AB = get_euclidean_distance(x1, y1, x2, y2)
 
@@ -146,6 +146,15 @@ def get_collision_point(x1, y1, x2, y2, dist):
 	Y = int(np.add(y1, np.multiply(dist, ( np.divide(np.subtract(y2, y1), AB) ))) )
 
 	return X, Y
+
+def get_perpendicular_points(x1, y1, x2, y2):
+
+	xa = int( np.add( np.negative(np.subtract(y2, y1)), x1 ))
+	ya = int( np.add( np.subtract(x2, x1), y1 ))
+	xb = int( np.add( np.subtract(y2, y1), x1) )
+	yb = int( np.add( np.subtract(x1, x2), y1) )
+
+	return xa, ya, xb, yb
 
 def angle_to_target(commonX, commonY, frontX, frontY, targetX, targetY):
 
@@ -184,3 +193,8 @@ def get_collision_points(centerX1, centerY1, centerX2, centerY2, RADIUS):
 	interY2 = np.add( centerIntersectionY, np.divide( np.multiply(np.subtract(centerX1, centerX2), h), dist ) )
 
 	return interX1, interX2, interY1, interY2
+
+def get_polyline_list(points):
+	
+	new_list = np.array([[points[i],points[i+1]] for i in range(0,len(points),2)])
+	return new_list
