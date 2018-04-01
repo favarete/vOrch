@@ -31,19 +31,19 @@ INTERSECTION_THRESHOLD = 2 * ROBOT_RADIUS
 
 # Initializations
 robot_ids = PATTERN.keys()
-robots_pos = { identification: { "posCenterX":0, 
-							 	 "posCenterY":0, 
-							 	 "posFrontX":0, 
-							 	 "posFrontY":0,
-							 	 "indetified": False } 
-							 	 for identification in robot_ids }
+robots_pos = { identification: {"posCenterX":0, 
+							 	"posCenterY":0, 
+							 	"posFrontX":0, 
+							 	"posFrontY":0,
+							 	"indetified": False } 
+							 	for identification in robot_ids }
 
 task_ids = TASK.keys()
 
-task_manager = { "solving_task": False,
-				 "task_ID": "",
-				 "solution_points":[],
-				 "busy_robots": 0  }
+task_manager = {"solving_task": False,
+				"task_ID": "",
+				"solution_points":[],
+				"busy_robots": 0  }
 
 # Initialize Webcam thread
 webcam = Webcam(camera)
