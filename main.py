@@ -11,8 +11,8 @@ DISTORTION = .3
 MIN_SQUARE_AREA = 5000
 MAX_SQUARE_AREA = 15000
 SHAPE_RESIZE = 150.0
-BLACK_THRESHOLD = 100
-WHITE_THRESHOLD = 150
+BLACK_THRESHOLD = 50
+WHITE_THRESHOLD = 100
 
 # VISUAL CONFIGURATION
 FONT_BIG = cv2.FONT_HERSHEY_SIMPLEX	
@@ -54,11 +54,13 @@ try:
 		img_rgb = webcam.get_current_frame()
 
 		img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
-		img_gray_blur = cv2.GaussianBlur(img_gray, (3, 3), 0)
+		img_gray_blur = cv2.GaussianBlur(img_gray, (5, 5), 0)
 		img_edges = cv2.Canny(img_gray_blur, 45, 60)
 
-		kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+		kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 		img_edges_closed = cv2.morphologyEx(img_edges, cv2.MORPH_CLOSE, kernel)
+
+		#cv2.imshow('debug',img_edges_closed)
 
 		_, contours, _ = cv2.findContours(img_edges_closed.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
