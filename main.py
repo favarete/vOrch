@@ -1,6 +1,9 @@
 from webcam import Webcam
 from database import PATTERN, TASK
 from utils import *
+from plan import make_plan
+
+import numpy as np
 import cv2
 
 # CONFIGURATION
@@ -31,12 +34,11 @@ INTERSECTION_THRESHOLD = 2 * ROBOT_RADIUS
 
 # Initializations
 robot_ids = PATTERN.keys()
-robots_pos = { identification: {"posCenterX":0, 
-							 	"posCenterY":0, 
-							 	"posFrontX":0, 
-							 	"posFrontY":0,
+robots_pos = { identification: {"node": np.empty((2, 2), dtype=int), 
 							 	"indetified": False } 
 							 	for identification in robot_ids }
+
+number_of_robots = len(robots_pos)
 
 task_ids = TASK.keys()
 
@@ -95,10 +97,8 @@ try:
 							cX, cY = get_central_points(c)
 							Xc, Yc = get_extended_point(cX, cY, frontX, frontY, ROBOT_RADIUS)
 
-							robots_pos[key]["posCenterX"] = cX
-							robots_pos[key]["posCenterY"] = cY
-							robots_pos[key]["posFrontX"] = Xc
-							robots_pos[key]["posFrontY"] = Yc
+							robots_pos[key]["node"][0] = [cX, cY]
+							robots_pos[key]["node"][1] = [Xc, Yc]
 							robots_pos[key]["indetified"] = True
 
 							cv2.drawContours(img_rgb, [approx], -1, DIMENSIONS_COLOR, LINE_THICKNESS)
@@ -128,9 +128,32 @@ try:
 								frontX, frontY = get_pattern_front(i, ordered_points)
 								centerX, centerY = get_central_points(c)
 
-
 								# List of solutions for the known tasks
 								if key == "ID::A":
+									topX, topY = get_extended_point(centerX, centerY, frontX, frontY, value["dimension"])
+									baseX, baseY = get_extended_point(centerX, centerY, frontX, frontY, -value["dimension"])
+
+									solution_points = get_polyline_list([topX, topY, baseX, baseY])
+
+									task_manager["solution_points"] = solution_points
+									task_manager["busy_robots"] += value["difficult"]
+
+									#TODO: Use this if it's busy on some task
+									task_manager["task_ID"] = key
+
+									cv2.circle(img_rgb, (topX, topY), DOT_SIZE, SOLUTION_COLOR, -1)
+									cv2.circle(img_rgb, (baseX, baseY), DOT_SIZE, SOLUTION_COLOR, -1)
+
+									cv2.polylines(img_rgb, [solution_points], True, SOLUTION_COLOR, 1)
+									cv2.putText(img_rgb, "Solution", 
+										   (topX - 5, topY - 15), 
+										   FONT_BIG, 
+										   TEXT_SIZE_BIG, 
+										   SOLUTION_COLOR, 
+										   BOLD, 
+										   cv2.LINE_AA)
+
+								elif key == "ID::B":
 									topX, topY = get_extended_point(centerX, centerY, frontX, frontY, value["dimension"][0])
 									baseX, baseY = get_extended_point(centerX, centerY, frontX, frontY, -value["dimension"][1])
 									auxX, auxY = get_extended_point(baseX, baseY, centerX, centerY, -value["dimension"][2])
