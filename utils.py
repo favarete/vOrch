@@ -167,20 +167,20 @@ def get_perpendicular_points(x1, y1, x2, y2):
 
 	return xa, ya, xb, yb
 
-def angle_to_target(commonX, commonY, frontX, frontY, targetX, targetY):
+def angle_to_target(common, front, target):
 
-	frontAngle = np.rad2deg( np.arctan2( np.subtract(frontY, commonY), np.subtract(frontX, commonX) ))
-	targetAngle = np.rad2deg( np.arctan2( np.subtract(targetY, commonY), np.subtract(targetX, commonX) ))
+	frontAngle = np.rad2deg( np.arctan2( np.subtract(front[1], common[1]), np.subtract(front[0], common[0]) ))
+	targetAngle = np.rad2deg( np.arctan2( np.subtract(target[1], common[1]), np.subtract(target[0], common[0]) ))
 
-	totalAngle = np.subtract(targetAngle, frontAngle)
+	totalAngle = np.subtract(frontAngle, targetAngle)
 
-	if totalAngle > 180.0:
-		return np.subtract(totalAngle, 360.0)
+	if totalAngle >= 180.0:
+		return int(np.subtract(totalAngle, 360.0))
 
-	if totalAngle < 180.0:
-		return np.add(totalAngle, 360.0)
+	if totalAngle <= -180.0:
+		return int(np.add(totalAngle, 360.0))
 
-	return totalAngle
+	return int(totalAngle)
 
 def is_intersecting(centerX1, centerY1, centerX2, centerY2, THRESHOLD):
 
