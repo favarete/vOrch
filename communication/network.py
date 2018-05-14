@@ -1,4 +1,5 @@
 from urllib2 import Request
+from threading import Thread
 import urllib2
 import socket
 import register
@@ -67,6 +68,13 @@ class SendCommand():
         html = urllib2.urlopen("http://"+self.IP+":8888/configDegreeValue"+self.formatString(value))
         html = html.read().decode()
         print html
+
+    def run_plan(self, plan):
+        for method in plan:
+            if type(method) == str:
+                getattr(self, method)()
+            else:
+                getattr(self, method[0])(method[1])
 
 class Server():
 
