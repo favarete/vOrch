@@ -138,14 +138,13 @@ def get_euclidean_distance(x1, y1, x2, y2):
 
 	return np.sqrt( np.add(np.square(np.subtract(x2, x1)), np.square(np.subtract(y1, y2))) )
 
-def get_ru_distance(centralX1, centralY1, centralX2, centralY2, DIAMETER):
+def get_ru_distance(central1, central2, DIAMETER):
 
-	ERROR = .5
+	ERROR = .1
 
-	euclidean_dist = get_euclidean_distance(centralX1, centralY1, centralX2, centralY2)
-	real_distance = np.subtract(euclidean_dist, DIAMETER)
+	euclidean_dist = get_euclidean_distance(central1[0], central1[1], central2[0], central2[1])
 
-	robotic_units = np.subtract(np.divide(real_distance, DIAMETER), ERROR)
+	robotic_units = np.subtract(np.divide(euclidean_dist, DIAMETER), ERROR)
 
 	return np.around(robotic_units, decimals=1)
 
