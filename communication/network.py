@@ -68,12 +68,14 @@ class SendCommand():
         html = html.read().decode()
         print html
 
-    def run_plan(self, plan):
+    def run_plan(self, plan, robots):
+        robots["ID::00" + self.ID]["running_plan"] = True
         for method in plan:
             if type(method) == str:
                 getattr(self, method)()
             else:
                 getattr(self, method[0])(method[1])
+        robots["ID::00" + self.ID]["running_plan"] = False
 
 class Server():
 
@@ -147,7 +149,7 @@ class Server():
     def robotsOnline(self):
         return len(self.robots)
 
-    def getRobot(self, code):
+    def getRobot(self, code): 
         tam = len(self.robots)
         i = 0
         while(i<tam):

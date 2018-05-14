@@ -10,6 +10,7 @@ import cv2
 
 # CONFIGURATION
 camera = 1
+number_of_robots = 2
 
 ROBOT_RADIUS = 100
 DISTORTION = .3
@@ -34,19 +35,23 @@ LINE_THICKNESS = 4
 # auxiliar constants
 INTERSECTION_THRESHOLD = 2 * ROBOT_RADIUS
 
+# Find Robots
+server = Server()
+server.scan(number_of_robots)
+
 # Initializations
 robot_ids = PATTERN.keys()
 robots_pos = { identification: {"node": np.empty((2, 2), dtype=int), 
 								"diameter": 2 * ROBOT_RADIUS,
-								"hardware": None, 
-							 	"indetified": False } 
+								"hardware": server.getRobot(identification[-2:]), 
+							 	"indetified": False,
+							 	"running_plan": False } 
 							 	for identification in robot_ids }
-
-number_of_robots = len(robots_pos)
 
 task_ids = TASK.keys()
 
-task_manager = {"solving_task": False,
+task_manager = {"solve_task": False,
+				"busy": False,
 				"task_ID": "",
 				"solution_points":[],
 				"busy_robots": 0  }
@@ -54,13 +59,6 @@ task_manager = {"solving_task": False,
 # Initialize Webcam thread
 webcam = Webcam(camera)
 webcam.start()
-
-# Find Robots
-server = Server()
-server.scan(2)
-
-robots_pos["ID::0000"]["hardware"] = server.getRobot('00')
-robots_pos["ID::0001"]["hardware"] = server.getRobot('01')
 
 try:
 	while True:
@@ -134,7 +132,7 @@ try:
 								task_found = True
 
 								#TODO: Use this if it's busy on some task
-								task_manager["solving_task"] = True
+								task_manager["solve_task"] = True
 
 								frontX, frontY = get_pattern_front(i, ordered_points)
 								centerX, centerY = get_central_points(c)
@@ -205,6 +203,20 @@ try:
 								break
 						if task_found:
 							break
+		#Start making plan
+		if task_manager["solve_task"]:
+			if not task_manager["busy"]:
+				task_manager["busy"] = True
+				plan = make_plan(robots_pos, task_manager)
+				t1 = Thread(target=robots_pos["ID::0000"]["hardware"].run_plan, args=(plan["ID::0000"], robots_pos))
+				t2 = Thread(target=robots_pos["ID::0001"]["hardware"].run_plan, args=(plan["ID::0001"], robots_pos))
+				t1.start()
+				t2.start()
+			else:
+				check = all(value["running_plan"] == False for key, value in robots_pos.iteritems())
+				print check
+				pass
+
 
 		cv2.imshow('feedback',img_rgb)
 		cv2.waitKey(10)
@@ -212,9 +224,3 @@ try:
 except KeyboardInterrupt:
 	webcam.destroy()
 	cv2.destroyAllWindows()
-
-	plan = make_plan(robots_pos, task_manager)
-	t1 = Thread(target=robots_pos["ID::0000"]["hardware"].run_plan, args=(plan["ID::0000"],))
-	t2 = Thread(target=robots_pos["ID::0001"]["hardware"].run_plan, args=(plan["ID::0001"],))
-	t1.start()
-	t2.start()
