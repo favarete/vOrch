@@ -1,7 +1,9 @@
 from webcam import Webcam
+from communication.network import Server
+from threading import Thread
 from database import PATTERN, TASK
 from utils import *
-from plan import make_plan
+from planner.plan import make_plan
 
 import numpy as np
 import cv2
@@ -35,6 +37,8 @@ INTERSECTION_THRESHOLD = 2 * ROBOT_RADIUS
 # Initializations
 robot_ids = PATTERN.keys()
 robots_pos = { identification: {"node": np.empty((2, 2), dtype=int), 
+								"diameter": 2 * ROBOT_RADIUS,
+								"hardware": None, 
 							 	"indetified": False } 
 							 	for identification in robot_ids }
 
@@ -50,6 +54,13 @@ task_manager = {"solving_task": False,
 # Initialize Webcam thread
 webcam = Webcam(camera)
 webcam.start()
+
+# Find Robots
+server = Server()
+server.scan(2)
+
+robots_pos["ID::0000"]["hardware"] = server.getRobot('00')
+robots_pos["ID::0001"]["hardware"] = server.getRobot('01')
 
 try:
 	while True:
@@ -201,3 +212,9 @@ try:
 except KeyboardInterrupt:
 	webcam.destroy()
 	cv2.destroyAllWindows()
+
+	plan = make_plan(robots_pos, task_manager)
+	t1 = Thread(target=robots_pos["ID::0000"]["hardware"].run_plan, args=(plan["ID::0000"],))
+	t2 = Thread(target=robots_pos["ID::0001"]["hardware"].run_plan, args=(plan["ID::0001"],))
+	t1.start()
+	t2.start()
