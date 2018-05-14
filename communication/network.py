@@ -38,6 +38,36 @@ class SendCommand():
         html = html.read().decode()
         print html
 
+    def invert(self):
+        html = urllib2.urlopen("http://"+self.IP+":8888/invert")
+        html = html.read().decode()
+        print html
+                               
+    def shiftUp(self):
+        html = urllib2.urlopen("http://"+self.IP+":8888/shiftUp")
+        html = html.read().decode()
+        print html
+                               
+    def shiftDown(self):
+        html = urllib2.urlopen("http://"+self.IP+":8888/shiftDown")
+        html = html.read().decode()
+        print html
+                               
+    def configDelay(self, value):
+        html = urllib2.urlopen("http://"+self.IP+":8888/configDelay"+self.formatString(value))
+        html = html.read().decode()
+        print html
+                               
+    def configStopValue(self, value):
+        html = urllib2.urlopen("http://"+self.IP+":8888/configStopValue"+self.formatString(value))
+        html = html.read().decode()
+        print html
+                               
+    def configDegreeValue(self, value):
+        html = urllib2.urlopen("http://"+self.IP+":8888/configDegreeValue"+self.formatString(value))
+        html = html.read().decode()
+        print html
+
 class Server():
 
     def __init__(self, host=None):
@@ -70,6 +100,7 @@ class Server():
                 q = q+1
 
                 if(q==robotsAvailable):
+                    print "Robot found on cache"
                     return
 
             except urllib2.URLError:
