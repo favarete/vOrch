@@ -1,5 +1,4 @@
 from urllib2 import Request
-from threading import Thread
 import urllib2
 import socket
 import register
