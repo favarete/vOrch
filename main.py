@@ -234,7 +234,8 @@ try:
 				task_manager["busy"] = True
 				plan = make_plan(robots_pos, task_manager)
 				for r in plan:
-					Thread(target=robots_pos[r]["hardware"].run_plan, args=(plan[r], robots_pos)).start()
+					if len(plan[r]) > 0:
+						Thread(target=robots_pos[r]["hardware"].run_plan, args=(plan[r], robots_pos)).start()
 			else:
 				check = all(value["running_plan"] == False for key, value in robots_pos.iteritems())
 				if check:

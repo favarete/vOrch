@@ -1,7 +1,8 @@
 from utils import *
 import numpy as np
 
-ERROR = 5
+ROTATION_ERROR = 5
+DISTANCE_ERROR = 0.5
 #robots_available = {}
 
 def make_plan(robots_data, task_manager):
@@ -12,14 +13,14 @@ def make_plan(robots_data, task_manager):
 	for element in robots_data:
 		if element in needed_rotation:
 			plan[element] = []
-			if needed_rotation[element] >= 0:
+			if needed_rotation[element] >= ROTATION_ERROR:
 				plan[element].append(("rotateLeft", np.absolute(needed_rotation[element]) ))
-			else:
+			elif needed_rotation[element] < -ROTATION_ERROR:
 				plan[element].append(("rotateRight", np.absolute(needed_rotation[element]) ))
 
-			plan[element].append(("moveForward", get_ru_distance(nearby_points[element], 
-							  									 robots_data[element]["node"][0],
-							  									 robots_data[element]['diameter'])))
+			ru_distance = get_ru_distance(nearby_points[element], robots_data[element]["node"][0], robots_data[element]['diameter'])
+			if ru_distance > DISTANCE_ERROR:
+				plan[element].append(("moveForward", ru_distance))
 	return plan
 	
 def aux_nearby_points(movable_points, target_points):
