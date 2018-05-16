@@ -4,6 +4,7 @@ import socket
 import register
 
 CACHE_ADDRESS = "communication/cache.txt"
+TIMEOUT_VALUE = 5
 
 class SendCommand():
 
@@ -19,54 +20,114 @@ class SendCommand():
         return z+str(value)
 
     def rotateLeft(self, value):
-        html = urllib2.urlopen("http://"+self.IP+":8888/rotateLeft"+self.formatString(value))
-        html = html.read().decode()
-        print html
+        try:
+            html = urllib2.urlopen("http://"+self.IP+":8888/rotateLeft"+self.formatString(value), timeout=TIMEOUT_VALUE)
+            html = html.read().decode()
+            print html
+        except urllib2.URLError, e:
+            print "Problem communicating with robot:"
+            print e
+        except socket.timeout:
+            print "Socket timed out!"
 
     def rotateRight(self, value):
-        html = urllib2.urlopen("http://"+self.IP+":8888/rotateRight"+self.formatString(value))
-        html = html.read().decode()
-        print html
+        try:
+            html = urllib2.urlopen("http://"+self.IP+":8888/rotateRight"+self.formatString(value), timeout=TIMEOUT_VALUE)
+            html = html.read().decode()
+            print html
+        except urllib2.URLError, e:
+            print "Problem communicating with robot:"
+            print e
+        except socket.timeout:
+            print "Socket timed out!"
 
     def moveForward(self, value):
-        html = urllib2.urlopen("http://"+self.IP+":8888/moveForward"+self.formatString(value))
-        html = html.read().decode()
-        print html
+        try:
+            html = urllib2.urlopen("http://"+self.IP+":8888/moveForward"+self.formatString(value), timeout=TIMEOUT_VALUE)
+            html = html.read().decode()
+            print html
+        except urllib2.URLError, e:
+            print "Problem communicating with robot:"
+            print e
+        except socket.timeout:
+            print "Socket timed out!"
 
     def moveBack(self, value):
-        html = urllib2.urlopen("http://"+self.IP+":8888/moveBack"+self.formatString(value))
-        html = html.read().decode()
-        print html
+        try:
+            html = urllib2.urlopen("http://"+self.IP+":8888/moveBack"+self.formatString(value), timeout=TIMEOUT_VALUE)
+            html = html.read().decode()
+            print html
+        except urllib2.URLError, e:
+            print "Problem communicating with robot:"
+            print e
+        except socket.timeout:
+            print "Socket timed out!"
 
     def invert(self):
-        html = urllib2.urlopen("http://"+self.IP+":8888/invert")
-        html = html.read().decode()
-        print html
+        try:
+            html = urllib2.urlopen("http://"+self.IP+":8888/invert", timeout=TIMEOUT_VALUE)
+            html = html.read().decode()
+            print html
+        except urllib2.URLError, e:
+            print "Problem communicating with robot:"
+            print e
+        except socket.timeout:
+            print "Socket timed out!"
                                
     def shiftUp(self):
-        html = urllib2.urlopen("http://"+self.IP+":8888/shiftUp")
-        html = html.read().decode()
-        print html
+        try:
+            html = urllib2.urlopen("http://"+self.IP+":8888/shiftUp", timeout=TIMEOUT_VALUE)
+            html = html.read().decode()
+            print html
+        except urllib2.URLError, e:
+            print "Problem communicating with robot:"
+            print e
+        except socket.timeout:
+            print "Socket timed out!"
                                
     def shiftDown(self):
-        html = urllib2.urlopen("http://"+self.IP+":8888/shiftDown")
-        html = html.read().decode()
-        print html
+        try:
+            html = urllib2.urlopen("http://"+self.IP+":8888/shiftDown", timeout=TIMEOUT_VALUE)
+            html = html.read().decode()
+            print html
+        except urllib2.URLError, e:
+            print "Problem communicating with robot:"
+            print e
+        except socket.timeout:
+            print "Socket timed out!"
                                
     def configDelay(self, value):
-        html = urllib2.urlopen("http://"+self.IP+":8888/configDelay"+self.formatString(value))
-        html = html.read().decode()
-        print html
+        try:
+            html = urllib2.urlopen("http://"+self.IP+":8888/configDelay"+self.formatString(value), timeout=TIMEOUT_VALUE)
+            html = html.read().decode()
+            print html
+        except urllib2.URLError, e:
+            print "Problem communicating with robot:"
+            print e
+        except socket.timeout:
+            print "Socket timed out!"
                                
     def configStopValue(self, value):
-        html = urllib2.urlopen("http://"+self.IP+":8888/configStopValue"+self.formatString(value))
-        html = html.read().decode()
-        print html
+        try:
+            html = urllib2.urlopen("http://"+self.IP+":8888/configStopValue"+self.formatString(value), timeout=TIMEOUT_VALUE)
+            html = html.read().decode()
+            print html
+        except urllib2.URLError, e:
+            print "Problem communicating with robot:"
+            print e
+        except socket.timeout:
+            print "Socket timed out!"
                                
     def configDegreeValue(self, value):
-        html = urllib2.urlopen("http://"+self.IP+":8888/configDegreeValue"+self.formatString(value))
-        html = html.read().decode()
-        print html
+        try:
+            html = urllib2.urlopen("http://"+self.IP+":8888/configDegreeValue"+self.formatString(value), timeout=TIMEOUT_VALUE)
+            html = html.read().decode()
+            print html
+        except urllib2.URLError, e:
+            print "Problem communicating with robot:"
+            print e
+        except socket.timeout:
+            print "Socket timed out!"
 
     def run_plan(self, plan, robots):
         robots["ID::00" + self.ID]["running_plan"] = True
@@ -75,6 +136,7 @@ class SendCommand():
                 getattr(self, method)()
             else:
                 getattr(self, method[0])(method[1])
+        print "Plan for ID:00" + str(self.ID) + " finished!"
         robots["ID::00" + self.ID]["running_plan"] = False
 
 class Server():
