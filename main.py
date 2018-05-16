@@ -54,6 +54,7 @@ task_manager = {"solve_task": False,
 				"busy": False,
 				"task_ID": "",
 				"solution_points":[],
+				"solved_tasks": [],
 				"busy_robots": 0  }
 
 # Initialize Webcam thread
@@ -190,6 +191,29 @@ try:
 										   BOLD, 
 										   cv2.LINE_AA)
 
+								elif key == "ID::C":
+									topX, topY = get_extended_point(centerX, centerY, frontX, frontY, value["dimension"])
+
+									solution_points = get_polyline_list([topX, topY])
+
+									task_manager["solution_points"] = solution_points
+									task_manager["busy_robots"] += value["difficult"]
+
+									#TODO: Use this if it's busy on some task
+									task_manager["task_ID"] = key
+
+									cv2.circle(img_rgb, (topX, topY), DOT_SIZE, SOLUTION_COLOR, -1)
+									
+									cv2.polylines(img_rgb, [solution_points], True, SOLUTION_COLOR, 1)
+									cv2.putText(img_rgb, "Solution", 
+										   (topX - 5, topY - 15), 
+										   FONT_BIG, 
+										   TEXT_SIZE_BIG, 
+										   SOLUTION_COLOR, 
+										   BOLD, 
+										   cv2.LINE_AA)
+
+								
 								cv2.drawContours(img_rgb, [approx], -1, TASK_COLOR, LINE_THICKNESS)
 								cv2.circle(img_rgb, (centerX, centerY), DOT_SIZE, TASK_COLOR, -1)
 								
@@ -204,19 +228,21 @@ try:
 						if task_found:
 							break
 		#Start making plan
+		
 		if task_manager["solve_task"]:
 			if not task_manager["busy"]:
 				task_manager["busy"] = True
 				plan = make_plan(robots_pos, task_manager)
-				t1 = Thread(target=robots_pos["ID::0000"]["hardware"].run_plan, args=(plan["ID::0000"], robots_pos))
-				t2 = Thread(target=robots_pos["ID::0001"]["hardware"].run_plan, args=(plan["ID::0001"], robots_pos))
-				t1.start()
-				t2.start()
+				for r in plan:
+					Thread(target=robots_pos[r]["hardware"].run_plan, args=(plan[r], robots_pos)).start()
 			else:
 				check = all(value["running_plan"] == False for key, value in robots_pos.iteritems())
-				print check
+				if check:
+					task_manager["busy"] = False
+					task_manager["solve_task"] = False
+					print "All plans executed!"
 				pass
-
+		
 
 		cv2.imshow('feedback',img_rgb)
 		cv2.waitKey(10)
