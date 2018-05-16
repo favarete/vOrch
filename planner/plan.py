@@ -10,17 +10,16 @@ def make_plan(robots_data, task_manager):
 	needed_rotation = aux_rotate_robots(robots_data, nearby_points)
 
 	for element in robots_data:
-		plan[element] = []
+		if element in needed_rotation:
+			plan[element] = []
+			if needed_rotation[element] >= 0:
+				plan[element].append(("rotateLeft", np.absolute(needed_rotation[element]) ))
+			else:
+				plan[element].append(("rotateRight", np.absolute(needed_rotation[element]) ))
 
-		if needed_rotation[element] >= 0:
-			plan[element].append(("rotateLeft", np.absolute(needed_rotation[element]) ))
-		else:
-			plan[element].append(("rotateRight", np.absolute(needed_rotation[element]) ))
-
-		plan[element].append(("moveForward", get_ru_distance(nearby_points[element], 
-						  									 robots_data[element]["node"][0],
-						  									 robots_data[element]['diameter'])))
-
+			plan[element].append(("moveForward", get_ru_distance(nearby_points[element], 
+							  									 robots_data[element]["node"][0],
+							  									 robots_data[element]['diameter'])))
 	return plan
 	
 def aux_nearby_points(movable_points, target_points):
@@ -42,7 +41,8 @@ def aux_nearby_points(movable_points, target_points):
 def aux_rotate_robots(movable_points, associated_target):
 	result = {}
 	for key, value in movable_points.iteritems():
-		result[key] = angle_to_target(value["node"][0], value["node"][1], associated_target[key])
+		if key in associated_target:
+			result[key] = angle_to_target(value["node"][0], value["node"][1], associated_target[key])
 	return result
 
 def free_way(state):
