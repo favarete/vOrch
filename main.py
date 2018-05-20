@@ -1,5 +1,5 @@
 from webcam import Webcam
-from communication.network import Server
+#from communication.network import Server
 from threading import Thread
 from database import PATTERN, TASK
 from utils import *
@@ -10,15 +10,14 @@ import cv2
 
 # CONFIGURATION
 camera = 1
-number_of_robots = 2
+number_of_robots = 1
 
 ROBOT_RADIUS = 100
-DISTORTION = .3
-MIN_SQUARE_AREA = 5000
-MAX_SQUARE_AREA = 15000
+DISTORTION = .1
 SHAPE_RESIZE = 150.0
-BLACK_THRESHOLD = 50
-WHITE_THRESHOLD = 100
+BLACK_THRESHOLD = 100
+WHITE_THRESHOLD = 120
+CANNY_THRESHOLD = .3
 
 # VISUAL CONFIGURATION
 FONT_BIG = cv2.FONT_HERSHEY_SIMPLEX	
@@ -36,14 +35,14 @@ LINE_THICKNESS = 4
 INTERSECTION_THRESHOLD = 2 * ROBOT_RADIUS
 
 # Find Robots
-server = Server()
-server.scan(number_of_robots)
+#server = Server()
+#server.scan(number_of_robots)
 
 # Initializations
 robot_ids = PATTERN.keys()
 robots_pos = { identification: {"node": np.empty((2, 2), dtype=int), 
 								"diameter": 2 * ROBOT_RADIUS,
-								"hardware": server.getRobot(identification[-2:]), 
+#								"hardware": server.getRobot(identification[-2:]), 
 							 	"indetified": False,
 							 	"running_plan": False } 
 							 	for identification in robot_ids }
@@ -65,9 +64,14 @@ try:
 	while True:
 		img_rgb = webcam.get_current_frame()
 
-		img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
+		img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY) 
 		img_gray_blur = cv2.GaussianBlur(img_gray, (5, 5), 0)
-		img_edges = cv2.Canny(img_gray_blur, 45, 60)
+		
+		v = np.median(img_gray_blur)
+		low = int(max(0, (1.0 - CANNY_THRESHOLD) * v))
+		high = int(min(255, (1.0 + CANNY_THRESHOLD) * v))
+
+		img_edges = cv2.Canny(img_gray_blur, low, high)
 
 		kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 		img_edges_closed = cv2.morphologyEx(img_edges, cv2.MORPH_CLOSE, kernel)
@@ -79,9 +83,9 @@ try:
 		for c in contours:
 			# Approximate the contour
 			peri = cv2.arcLength(c, True)
-			approx = cv2.approxPolyDP(c, 0.01 * peri, True)
+			approx = cv2.approxPolyDP(c, 0.04 * peri, True)
 
-			if is_valid_square(approx, DISTORTION, MIN_SQUARE_AREA, MAX_SQUARE_AREA):
+			if is_valid_square(approx, DISTORTION):
 				robot_found = False
 				task_found = False
 				
@@ -228,7 +232,7 @@ try:
 						if task_found:
 							break
 		#Start making plan
-		
+		'''		
 		if task_manager["solve_task"]:
 			if not task_manager["busy"]:
 				task_manager["busy"] = True
@@ -244,7 +248,7 @@ try:
 					print "All plans executed!"
 				pass
 		
-
+		'''
 		cv2.imshow('feedback',img_rgb)
 		cv2.waitKey(10)
 

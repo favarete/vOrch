@@ -90,19 +90,15 @@ def get_glyph_pattern(image, black_threshold, white_threshold):
  
     return cells
 
-def is_valid_square(points, distortion, min_square_area, max_square_area):
+def is_valid_square(points, distortion):
 
 	distortion = [np.subtract(1, distortion), np.add(1, distortion)]
 	
 	if len(points) != 4:
 		return False
 
-	if cv2.isContourConvex(points) == False:
-		return False
-
-	area = cv2.contourArea(points)
-	if area <= min_square_area or area > max_square_area:
-		return False
+	#if cv2.isContourConvex(points) == False:
+	#	return False
 
 	x,y,w,h = cv2.boundingRect(points)
 	aspect_ratio = np.divide(float(w),h)
