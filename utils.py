@@ -54,7 +54,7 @@ def resize_image(image, new_size):
     ratio = new_size / image.shape[1]
     return cv2.resize(image,(int(new_size),int(image.shape[0]*ratio)))
 
-def get_glyph_pattern(image, black_threshold, white_threshold):
+def get_glyph_pattern(image):
  
     # collect pixel from each cell (left to right, top to bottom)
     cells = []
@@ -84,9 +84,9 @@ def get_glyph_pattern(image, black_threshold, white_threshold):
  
     # threshold pixels to either black or white
     for idx, val in enumerate(cells):
-        if val < black_threshold:
+        if val < 50:
             cells[idx] = 0
-        elif val > white_threshold:
+        elif val > 200:
             cells[idx] = 1
         else:
             return None

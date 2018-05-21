@@ -15,8 +15,6 @@ number_of_robots = 1
 ROBOT_RADIUS = 100
 DISTORTION = .1
 SHAPE_RESIZE = 150.0
-BLACK_THRESHOLD = 100
-WHITE_THRESHOLD = 120
 CANNY_THRESHOLD = .3
 
 # VISUAL CONFIGURATION
@@ -93,10 +91,10 @@ try:
 				ordered_points, topdown_quad = get_topdown_quad(img_gray, approx.reshape(4, 2))
 				resized_shape = resize_image(topdown_quad, SHAPE_RESIZE)
 
-				if resized_shape[5, 5] > BLACK_THRESHOLD: 
+				if resized_shape[5, 5] > 150: 
 					continue
  				
- 				glyph_pattern = get_glyph_pattern(resized_shape, BLACK_THRESHOLD, WHITE_THRESHOLD)
+ 				glyph_pattern = get_glyph_pattern(resized_shape)
 
  				#Draw all squares found
 				#cv2.drawContours(img_rgb, [approx], -1, DIMENSIONS_COLOR, LINE_THICKNESS/2)
