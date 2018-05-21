@@ -61,6 +61,9 @@ def get_glyph_pattern(image, black_threshold, white_threshold):
      
     cell_half_width = int(round(image.shape[1] / 10.0))
     cell_half_height = int(round(image.shape[0] / 10.0))
+
+    blur_pattern = cv2.GaussianBlur(image,(5,5),0)
+    ret, mask = cv2.threshold(blur_pattern, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
  
     row1 = cell_half_height*3
     row2 = cell_half_height*5
@@ -69,15 +72,15 @@ def get_glyph_pattern(image, black_threshold, white_threshold):
     col2 = cell_half_width*5
     col3 = cell_half_width*7
  
-    cells.append(image[row1, col1])
-    cells.append(image[row1, col2])
-    cells.append(image[row1, col3])
-    cells.append(image[row2, col1])
-    cells.append(image[row2, col2])
-    cells.append(image[row2, col3])
-    cells.append(image[row3, col1])
-    cells.append(image[row3, col2])
-    cells.append(image[row3, col3])
+    cells.append(mask[row1, col1])
+    cells.append(mask[row1, col2])
+    cells.append(mask[row1, col3])
+    cells.append(mask[row2, col1])
+    cells.append(mask[row2, col2])
+    cells.append(mask[row2, col3])
+    cells.append(mask[row3, col1])
+    cells.append(mask[row3, col2])
+    cells.append(mask[row3, col3])
  
     # threshold pixels to either black or white
     for idx, val in enumerate(cells):
