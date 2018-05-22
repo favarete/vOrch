@@ -100,8 +100,8 @@ def is_valid_square(points, distortion):
 	if len(points) != 4:
 		return False
 
-	#if cv2.isContourConvex(points) == False:
-	#	return False
+	if cv2.isContourConvex(points) == False:
+		return False
 
 	x,y,w,h = cv2.boundingRect(points)
 	aspect_ratio = np.divide(float(w),h)
