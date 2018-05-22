@@ -13,7 +13,7 @@ camera = 1
 number_of_robots = 1
 
 ROBOT_RADIUS = 100
-DISTORTION = .1
+DISTORTION = .4
 SHAPE_RESIZE = 150.0
 CANNY_THRESHOLD = .3
 
