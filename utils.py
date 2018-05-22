@@ -71,7 +71,7 @@ def get_glyph_pattern(image):
     col1 = cell_half_width*3
     col2 = cell_half_width*5
     col3 = cell_half_width*7
- 
+
     cells.append(mask[row1, col1])
     cells.append(mask[row1, col2])
     cells.append(mask[row1, col3])
@@ -151,10 +151,13 @@ def get_extended_point(x1, y1, x2, y2, dist):
 	
 	AB = get_euclidean_distance(x1, y1, x2, y2)
 
-	X = int(np.add(x1, np.multiply(dist, ( np.divide(np.subtract(x2, x1), AB) ))) )
-	Y = int(np.add(y1, np.multiply(dist, ( np.divide(np.subtract(y2, y1), AB) ))) )
+	X = np.add(x1, np.multiply(dist, ( np.divide(np.subtract(x2, x1), AB) )))
+	Y = np.add(y1, np.multiply(dist, ( np.divide(np.subtract(y2, y1), AB) )))
 
-	return X, Y
+	if type(X) != np.float64 or type(Y) != np.float64:
+		return x1, y1
+
+	return int(X), int(Y)
 
 def get_perpendicular_points(x1, y1, x2, y2):
 
