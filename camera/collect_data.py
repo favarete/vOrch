@@ -5,7 +5,7 @@ from pathlib import Path
   
 camera = 1
 
-chess_pattern_path = Path.cwd() / "sample_images" / "pattern" / "chessboard"
+chess_pattern_path = Path.cwd() / "calibration_data" / "pattern" / "chessboard" / "img"
 if chess_pattern_path.exists() == False:
     chess_pattern_path.mkdir(parents=True)
 
