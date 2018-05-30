@@ -11,6 +11,7 @@ import cv2
 # CONFIGURATION
 camera = 1
 number_of_robots = 1
+calibrated_camera = True
 
 ROBOT_RADIUS = 100
 DISTORTION = .4
@@ -58,9 +59,31 @@ task_manager = {"solve_task": False,
 webcam = Webcam(camera)
 webcam.start()
 
+# Calibration 
+if calibrated_camera:
+	from pathlib import Path
+	calibration_data = Path.cwd() / "camera" / "calibration_data" / "pattern" / "chessboard" / "calibration_ouput.npz"
+	npzfile = np.load(calibration_data)
+	c_ret = npzfile["ret"] 
+	c_mtx = npzfile["mtx"]
+	c_dist = npzfile["dist"]
+	c_rvecs = npzfile["rvecs"]
+	c_tvecs = npzfile["tvecs"]
+
 try:
 	while True:
 		img_rgb = webcam.get_current_frame()
+
+		if calibrated_camera:
+			c_height,  c_width = img_rgb.shape[:2]
+			c_newcameramtx, c_roi=cv2.getOptimalNewCameraMatrix(c_mtx,c_dist,(c_width,c_height),1,(c_width,c_height))
+			# undistort
+			c_dst = cv2.undistort(img_rgb, c_mtx, c_dist, None, c_newcameramtx)
+
+			# crop the image
+			c_x, c_y, c_width, c_height = c_roi
+			c_dst = c_dst[c_y:c_y+c_height, c_x:c_x+c_width]
+			img_rgb = c_dst
 
 		img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY) 
 		img_gray_blur = cv2.GaussianBlur(img_gray, (5, 5), 0)
