@@ -20,3 +20,10 @@ class Webcam:
 
     def destroy(self):
     	self.video_capture.release()
+
+    def get_resolution(self):
+        return (self.video_capture.get(3), self.video_capture.get(4))
+
+    def set_resolution(self, width, height):
+        self.video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+        self.video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
