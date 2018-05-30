@@ -1,4 +1,4 @@
-from webcam import Webcam
+from camera.webcam import Webcam
 #from communication.network import Server
 from threading import Thread
 from database import PATTERN, TASK
@@ -15,7 +15,7 @@ number_of_robots = 1
 ROBOT_RADIUS = 100
 DISTORTION = .4
 SHAPE_RESIZE = 150.0
-CANNY_THRESHOLD = .3
+CANNY_THRESHOLD = .7
 
 # VISUAL CONFIGURATION
 FONT_BIG = cv2.FONT_HERSHEY_SIMPLEX	
@@ -91,7 +91,7 @@ try:
 				ordered_points, topdown_quad = get_topdown_quad(img_gray, approx.reshape(4, 2))
 				resized_shape = resize_image(topdown_quad, SHAPE_RESIZE)
 
-				if resized_shape[5, 5] > 150: 
+				if resized_shape[5, 5] > 200: 
 					continue
  				
  				glyph_pattern = get_glyph_pattern(resized_shape)
@@ -143,9 +143,8 @@ try:
 								# List of solutions for the known tasks
 								if key == "ID::A":
 									topX, topY = get_extended_point(centerX, centerY, frontX, frontY, value["dimension"])
-									baseX, baseY = get_extended_point(centerX, centerY, frontX, frontY, -value["dimension"])
 
-									solution_points = get_polyline_list([topX, topY, baseX, baseY])
+									solution_points = get_polyline_list([topX, topY])
 
 									task_manager["solution_points"] = solution_points
 									task_manager["busy_robots"] += value["difficult"]
@@ -154,8 +153,7 @@ try:
 									task_manager["task_ID"] = key
 
 									cv2.circle(img_rgb, (topX, topY), DOT_SIZE, SOLUTION_COLOR, -1)
-									cv2.circle(img_rgb, (baseX, baseY), DOT_SIZE, SOLUTION_COLOR, -1)
-
+									
 									cv2.polylines(img_rgb, [solution_points], True, SOLUTION_COLOR, 1)
 									cv2.putText(img_rgb, "Solution", 
 										   (topX - 5, topY - 15), 
@@ -164,7 +162,7 @@ try:
 										   SOLUTION_COLOR, 
 										   BOLD, 
 										   cv2.LINE_AA)
-
+								
 								elif key == "ID::B":
 									topX, topY = get_extended_point(centerX, centerY, frontX, frontY, value["dimension"][0])
 									baseX, baseY = get_extended_point(centerX, centerY, frontX, frontY, -value["dimension"][1])
@@ -195,8 +193,9 @@ try:
 
 								elif key == "ID::C":
 									topX, topY = get_extended_point(centerX, centerY, frontX, frontY, value["dimension"])
+									baseX, baseY = get_extended_point(centerX, centerY, frontX, frontY, -value["dimension"])
 
-									solution_points = get_polyline_list([topX, topY])
+									solution_points = get_polyline_list([topX, topY, baseX, baseY])
 
 									task_manager["solution_points"] = solution_points
 									task_manager["busy_robots"] += value["difficult"]
@@ -205,7 +204,8 @@ try:
 									task_manager["task_ID"] = key
 
 									cv2.circle(img_rgb, (topX, topY), DOT_SIZE, SOLUTION_COLOR, -1)
-									
+									cv2.circle(img_rgb, (baseX, baseY), DOT_SIZE, SOLUTION_COLOR, -1)
+
 									cv2.polylines(img_rgb, [solution_points], True, SOLUTION_COLOR, 1)
 									cv2.putText(img_rgb, "Solution", 
 										   (topX - 5, topY - 15), 
@@ -230,8 +230,8 @@ try:
 						if task_found:
 							break
 		#Start making plan
-		'''		
-		if task_manager["solve_task"]:
+			
+		if task_manager["solve_task"] and robot_found:
 			if not task_manager["busy"]:
 				task_manager["busy"] = True
 				plan = make_plan(robots_pos, task_manager)
@@ -246,7 +246,7 @@ try:
 					print "All plans executed!"
 				pass
 		
-		'''
+		
 		cv2.imshow('feedback',img_rgb)
 		cv2.waitKey(10)
 
