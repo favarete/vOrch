@@ -100,7 +100,7 @@ try:
 		#cv2.imshow('debug',img_edges_closed)
 
 		_, contours, _ = cv2.findContours(img_edges_closed.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
+		
 		for c in contours:
 			# Approximate the contour
 			peri = cv2.arcLength(c, True)
@@ -114,7 +114,7 @@ try:
 				ordered_points, topdown_quad = get_topdown_quad(img_gray, approx.reshape(4, 2))
 				resized_shape = resize_image(topdown_quad, SHAPE_RESIZE)
 
-				if resized_shape[5, 5] > 200: 
+				if resized_shape[5, 5] > 170: 
 					continue
  				
  				glyph_pattern = get_glyph_pattern(resized_shape)
@@ -253,7 +253,7 @@ try:
 						if task_found:
 							break
 		#Start making plan
-			
+		'''
 		if task_manager["solve_task"] and robot_found:
 			if not task_manager["busy"]:
 				task_manager["busy"] = True
@@ -268,7 +268,7 @@ try:
 					task_manager["solve_task"] = False
 					print "All plans executed!"
 				pass
-		
+		'''
 		
 		cv2.imshow('feedback',img_rgb)
 		cv2.waitKey(10)
