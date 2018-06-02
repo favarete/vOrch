@@ -57,3 +57,5 @@ TASK = {
 				    "dimension": [140, 60, 120]
 				  }
 }
+
+SYSTEM_IDS = (PATTERN.keys(), TASK.keys())
