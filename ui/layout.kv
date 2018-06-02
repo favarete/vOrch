@@ -1,0 +1,25 @@
+#:kivy 1.10.0
+#:include ui/buttons.kv
+#:include ui/labels.kv
+
+<View>:
+	frame: frame
+
+	id: container
+	rows: 3
+	SmallTextLabel:
+		size_hint: (1, .03)
+		text: 'placeholder_1'
+
+	BoxLayout:
+		orientation: "horizontal"
+		CameraStream:
+			id: frame
+			source: ''
+			size_hint: (.66, 1)
+		BigTextLabel:
+			size_hint: (.34, 1)
+			text: 'placeholder_3'	
+	SmallTextLabel:
+		size_hint: (1, .03)
+		text: 'placeholder_2'
