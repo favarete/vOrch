@@ -84,9 +84,9 @@ def get_glyph_pattern(image):
  
     # threshold pixels to either black or white
     for idx, val in enumerate(cells):
-        if val < 50:
+        if val == 0:
             cells[idx] = 0
-        elif val > 200:
+        elif val == 255:
             cells[idx] = 1
         else:
             return None
