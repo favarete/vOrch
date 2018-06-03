@@ -1,16 +1,17 @@
 from utils import *
 import numpy as np
+import _global_
 
 ROTATION_ERROR = 5
 DISTANCE_ERROR = 0.5
 #robots_available = {}
 
-def make_plan(robots_data, task_manager):
+def make_plan():
 	plan = {}
-	nearby_points = aux_nearby_points(robots_data, task_manager["solution_points"])
-	needed_rotation = aux_rotate_robots(robots_data, nearby_points)
+	nearby_points = aux_nearby_points(_global_.robots_data, _global_.task_manager["solution_points"])
+	needed_rotation = aux_rotate_robots(_global_.robots_data, nearby_points)
 
-	for element in robots_data:
+	for element in _global_.robots_data:
 		if element in needed_rotation:
 			plan[element] = []
 			if needed_rotation[element] >= ROTATION_ERROR:
@@ -18,7 +19,9 @@ def make_plan(robots_data, task_manager):
 			elif needed_rotation[element] < -ROTATION_ERROR:
 				plan[element].append(("rotateRight", np.absolute(needed_rotation[element]) ))
 
-			ru_distance = get_ru_distance(nearby_points[element], robots_data[element]["node"][0], robots_data[element]['diameter'])
+			ru_distance = get_ru_distance(nearby_points[element], 
+										  _global_.robots_data[element]["node"][0], 
+										  _global_.robots_data[element]['diameter'])
 			if ru_distance > DISTANCE_ERROR:
 				plan[element].append(("moveForward", ru_distance))
 	return plan
