@@ -31,37 +31,41 @@
 						size: self.size
 				id: section_1
 				orientation: 'horizontal'
-				size_hint: (1, .25)
-				padding: [5, 10]
-				spacing: (5, 5)
+				size_hint: (1, .22)
+				padding: 5
+				spacing: 5
 				BoxLayout:
 					id: section_1a
 					orientation: 'horizontal'
 					size_hint: (.7, 1)
-					padding: (0, 15)
-					SelectButton:
-						id: filter_borders
-						name: "filter_borders"
-						on_press: root.set_view(self)
-						text: 'Contours'
-						state: 'normal'
-					SelectButton:
-						id: filter_gray
-						name: "filter_gray"
-						on_press: root.set_view(self)
-						text: 'Grayscale'
-						state: 'normal'
-					SelectButton:
-						id: filter_blur
-						name: "filter_blur"
-						on_press: root.set_view(self)
-						text: 'Blur'
-						state: 'normal'
+					padding: [0, 20, 0, 7]
+					AnchorLayout:
+						SelectButton:
+							id: filter_borders
+							name: "filter_borders"
+							on_press: root.set_view(self)
+							text: 'Contours'
+							state: 'normal'
+					AnchorLayout:
+						SelectButton:
+							id: filter_gray
+							name: "filter_gray"
+							on_press: root.set_view(self)
+							text: 'Grayscale'
+							state: 'normal'
+					AnchorLayout:
+						SelectButton:
+							id: filter_blur
+							name: "filter_blur"
+							on_press: root.set_view(self)
+							text: 'Grayscale \nBlur'
+							halign: 'center'
+							state: 'normal'
 				BoxLayout:
 					id: section_1b
 					orientation: 'vertical'
 					size_hint: (.3, 1)
-					padding: (0, 10)
+					padding: [0, 15]
 					MediumTextLabel:
 						text: "Detection"
 					SwitchButton:
@@ -78,7 +82,7 @@
 						active: False
 			BoxLayout:
 				orientation: 'horizontal'
-				size_hint: (1, .75)
+				size_hint: (1, .78)
 				BigTextLabel:
 					text: 'placeholder_2'
 	SmallTextLabel:
