@@ -80,8 +80,108 @@
 						on_active: root.set_feeback(self)
 						active: False
 			BoxLayout:
+				canvas:
+					Color:
+						rgb: (.1, .1, .1)
+					Rectangle:
+						pos: self.pos
+						size: self.size
+				id: section_2
 				orientation: 'horizontal'
-				size_hint: (1, .78)
+				size_hint: (1, .18)
+				padding: 5
+				spacing: 5
+				BoxLayout:
+					orientation: 'vertical'
+					SmallTextLabel:
+						text: 'FPS: %s' % int(variable_fps.value)
+					VariableControl:
+						id: variable_fps
+						name: "variable_fps"
+						range: (1, 60)
+						value: 24
+						step: 1
+						on_touch_move: root.set_variables(self)
+				BoxLayout:
+					orientation: 'vertical'
+					SmallTextLabel:
+						text: 'Blur: %s' % int(variable_blur.value_normalized * 100)
+					VariableControl:
+						id: variable_blur
+						name: "variable_blur"
+						range: (1, 21)
+						value: 7
+						step: 2
+						on_touch_move: root.set_variables(self)
+				BoxLayout:
+					orientation: 'vertical'
+					SmallTextLabel:
+						text: 'MinSqr: %s' % int(variable_minsqr.value_normalized * 100)
+					VariableControl:
+						id: variable_minsqr
+						name: "variable_minsqr"
+						range: (0, 1000)
+						value: 350
+						step: 50
+						on_touch_move: root.set_variables(self)
+				BoxLayout:
+					orientation: 'vertical'
+					SmallTextLabel:
+						text: 'MaxSqr: %s' % int(variable_maxsqr.value_normalized * 100)
+					VariableControl:
+						id: variable_maxsqr
+						name: "variable_maxsqr"
+						range: (0, 150000)
+						value: 120000
+						step: 1000
+						on_touch_move: root.set_variables(self)
+				BoxLayout:
+					orientation: 'vertical'
+					SmallTextLabel:
+						text: 'SqrDst: %s' % int(variable_sqrdst.value * 100)
+					VariableControl:
+						id: variable_sqrdst
+						name: "variable_sqrdst"
+						range: (0, 1)
+						value: .4
+						step: .05
+						on_touch_move: root.set_variables(self)
+				BoxLayout:
+					orientation: 'vertical'
+					SmallTextLabel:
+						text: 'CannyT: %s' % int(variable_cannyt.value * 100)
+					VariableControl:
+						id: variable_cannyt
+						name: "variable_cannyt"
+						range: (0, 1)
+						value: .7
+						step: .05
+						on_touch_move: root.set_variables(self)
+				BoxLayout:
+					orientation: 'vertical'
+					SmallTextLabel:
+						text: 'ErrorR: %s' % int(variable_errorr.value_normalized * 100)
+					VariableControl:
+						id: variable_errorr
+						name: "variable_errorr"
+						range: (0, 90)
+						value: 2
+						step: 1
+						on_touch_move: root.set_variables(self)
+				BoxLayout:
+					orientation: 'vertical'
+					SmallTextLabel:
+						text: 'ErrorD: %s' % int(variable_errord.value_normalized * 100)
+					VariableControl:
+						id: variable_errord
+						name: "variable_errord"
+						range: (0, 2)
+						value: .5
+						step: .1
+						on_touch_move: root.set_variables(self)
+			BoxLayout:
+				orientation: 'horizontal'
+				size_hint: (1, .60)
 				BigTextLabel:
 					text: 'placeholder_2'
 	SmallTextLabel:
