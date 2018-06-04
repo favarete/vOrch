@@ -11,7 +11,19 @@ gui_properties = {
 	"section_1b": {
 					"detection_view": True,
 					"all_squares_view": False
+	},
+
+	"section_2": {
+					"variable_fps": 24,
+					"variable_blur": 7,
+					"variable_minsqr": 350,
+					"variable_maxsqr": 120000,
+					"variable_sqrdst": .4,
+					"variable_cannyt": .7,
+					"variable_errorr": 2,
+					"variable_errord": .5
 	}
+
 }
 
 robots_manager = { identification: {"node": np.empty((2, 2), dtype=int), 
