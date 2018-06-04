@@ -4,7 +4,7 @@ import cv2
 import _global_
 from utils import *
 
-DISTORTION = .4
+DISTORTION = _global_.gui_properties["section_2"]["variable_sqrdst"]
 SHAPE_RESIZE = 150.0
 
 # VISUAL CONFIGURATION

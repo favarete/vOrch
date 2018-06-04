@@ -33,11 +33,12 @@ OpenCV Configuration
 '''
 #Camera
 _webcam = 1
-_fps = 24
+_fps = _global_.gui_properties["section_2"]["variable_fps"]
+_blur = _global_.gui_properties["section_2"]["variable_blur"]
 _resolution = (940, 780)
 
 number_of_robots = 1
-CANNY_THRESHOLD = .7
+CANNY_THRESHOLD = _global_.gui_properties["section_2"]["variable_cannyt"]
 
 # Find Robots
 #server = Server()
@@ -72,7 +73,7 @@ class CameraStream(Image):
 		def get_image_data(self, img):
 
 			img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
-			img_gray_blur = cv2.GaussianBlur(img_gray, (7, 7), 0)
+			img_gray_blur = cv2.GaussianBlur(img_gray, (_blur, _blur), 0)
 			
 			v = np.median(img_gray_blur)
 			low = int(max(0, (1.0 - CANNY_THRESHOLD) * v))
@@ -110,6 +111,9 @@ class View(GridLayout):
 	def set_feeback(self, instance):
 		filters = _global_.gui_properties["section_1b"]
 		filters[instance.name] = instance.active
+
+	def set_variables(self, instance):
+		pass
 
 class visualOrchestrator(App):
 	def build(self):

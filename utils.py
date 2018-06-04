@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import _global_
 
 def order_points(points):
  
@@ -101,7 +102,10 @@ def is_valid_square(points, distortion):
 		return False
 
 	area = cv2.contourArea(points)
-	if area <= 350:
+	if area <= _global_.gui_properties["section_2"]["variable_minsqr"]:
+		return False
+
+	if area >= _global_.gui_properties["section_2"]["variable_maxsqr"]:
 		return False
 
 	if cv2.isContourConvex(points) == False:

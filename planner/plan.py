@@ -2,8 +2,8 @@ from utils import *
 import numpy as np
 import _global_
 
-ROTATION_ERROR = 2
-DISTANCE_ERROR = 0.5
+ROTATION_ERROR = _global_.gui_properties["section_2"]["variable_errorr"]
+DISTANCE_ERROR = _global_.gui_properties["section_2"]["variable_errord"]
 #robots_available = {}
 
 def make_plan():
