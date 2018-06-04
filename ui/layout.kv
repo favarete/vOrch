@@ -103,7 +103,7 @@
 						range: (1, 60)
 						value: g.gui_properties["section_2"]["variable_fps"]
 						step: 1
-						on_touch_move: root.set_variables(self)
+						on_value: root.set_variables(self)
 				BoxLayout:
 					orientation: 'vertical'
 					SmallTextLabel:
@@ -114,7 +114,7 @@
 						range: (1, 21)
 						value: g.gui_properties["section_2"]["variable_blur"]
 						step: 2
-						on_touch_move: root.set_variables(self)
+						on_value: root.set_variables(self)
 				BoxLayout:
 					orientation: 'vertical'
 					SmallTextLabel:
@@ -125,7 +125,7 @@
 						range: (0, 1000)
 						value: g.gui_properties["section_2"]["variable_minsqr"]
 						step: 50
-						on_touch_move: root.set_variables(self)
+						on_value: root.set_variables(self)
 				BoxLayout:
 					orientation: 'vertical'
 					SmallTextLabel:
@@ -136,7 +136,7 @@
 						range: (0, 150000)
 						value: g.gui_properties["section_2"]["variable_maxsqr"]
 						step: 1000
-						on_touch_move: root.set_variables(self)
+						on_value: root.set_variables(self)
 				BoxLayout:
 					orientation: 'vertical'
 					SmallTextLabel:
@@ -147,7 +147,7 @@
 						range: (0, 1)
 						value: g.gui_properties["section_2"]["variable_sqrdst"]
 						step: .05
-						on_touch_move: root.set_variables(self)
+						on_value: root.set_variables(self)
 				BoxLayout:
 					orientation: 'vertical'
 					SmallTextLabel:
@@ -158,7 +158,7 @@
 						range: (0, 1)
 						value: g.gui_properties["section_2"]["variable_cannyt"]
 						step: .05
-						on_touch_move: root.set_variables(self)
+						on_value: root.set_variables(self)
 				BoxLayout:
 					orientation: 'vertical'
 					SmallTextLabel:
@@ -169,7 +169,7 @@
 						range: (0, 90)
 						value: g.gui_properties["section_2"]["variable_errorr"]
 						step: 1
-						on_touch_move: root.set_variables(self)
+						on_value: root.set_variables(self)
 				BoxLayout:
 					orientation: 'vertical'
 					SmallTextLabel:
@@ -180,7 +180,7 @@
 						range: (0, 2)
 						value: g.gui_properties["section_2"]["variable_errord"]
 						step: .1
-						on_touch_move: root.set_variables(self)
+						on_value: root.set_variables(self)
 			BoxLayout:
 				orientation: 'horizontal'
 				size_hint: (1, .60)
