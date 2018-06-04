@@ -2,6 +2,8 @@
 #:include ui/controls.kv
 #:include ui/labels.kv
 
+#:import g _global_
+
 <View>:
 	frame: frame
 	id: container
@@ -44,14 +46,14 @@
 							name: "filter_borders"
 							on_press: root.set_view(self)
 							text: 'Contours'
-							state: 'normal'
+							state: 'normal' if not g.gui_properties["section_1a"]["filter_borders"] else 'down'
 					AnchorLayout:
 						SelectButton:
 							id: filter_gray
 							name: "filter_gray"
 							on_press: root.set_view(self)
 							text: 'Grayscale'
-							state: 'normal'
+							state: 'normal' if not g.gui_properties["section_1a"]["filter_gray"] else 'down'
 					AnchorLayout:
 						SelectButton:
 							id: filter_blur
@@ -59,7 +61,7 @@
 							on_press: root.set_view(self)
 							text: 'Grayscale \nBlur'
 							halign: 'center'
-							state: 'normal'
+							state: 'normal' if not g.gui_properties["section_1a"]["filter_blur"] else 'down'
 				BoxLayout:
 					id: section_1b
 					orientation: 'vertical'
@@ -71,14 +73,14 @@
 						id: detection_view
 						name: "detection_view"
 						on_active: root.set_feeback(self)
-						active: True
+						active: g.gui_properties["section_1b"]["detection_view"]
 					MediumTextLabel:
 						text: "All Squares"
 					SwitchButton:
 						id: all_squares_view
 						name: "all_squares_view"
 						on_active: root.set_feeback(self)
-						active: False
+						active: g.gui_properties["section_1b"]["all_squares_view"]
 			BoxLayout:
 				canvas:
 					Color:
@@ -99,7 +101,7 @@
 						id: variable_fps
 						name: "variable_fps"
 						range: (1, 60)
-						value: 24
+						value: g.gui_properties["section_2"]["variable_fps"]
 						step: 1
 						on_touch_move: root.set_variables(self)
 				BoxLayout:
@@ -110,7 +112,7 @@
 						id: variable_blur
 						name: "variable_blur"
 						range: (1, 21)
-						value: 7
+						value: g.gui_properties["section_2"]["variable_blur"]
 						step: 2
 						on_touch_move: root.set_variables(self)
 				BoxLayout:
@@ -121,7 +123,7 @@
 						id: variable_minsqr
 						name: "variable_minsqr"
 						range: (0, 1000)
-						value: 350
+						value: g.gui_properties["section_2"]["variable_minsqr"]
 						step: 50
 						on_touch_move: root.set_variables(self)
 				BoxLayout:
@@ -132,7 +134,7 @@
 						id: variable_maxsqr
 						name: "variable_maxsqr"
 						range: (0, 150000)
-						value: 120000
+						value: g.gui_properties["section_2"]["variable_maxsqr"]
 						step: 1000
 						on_touch_move: root.set_variables(self)
 				BoxLayout:
@@ -143,7 +145,7 @@
 						id: variable_sqrdst
 						name: "variable_sqrdst"
 						range: (0, 1)
-						value: .4
+						value: g.gui_properties["section_2"]["variable_sqrdst"]
 						step: .05
 						on_touch_move: root.set_variables(self)
 				BoxLayout:
@@ -154,7 +156,7 @@
 						id: variable_cannyt
 						name: "variable_cannyt"
 						range: (0, 1)
-						value: .7
+						value: g.gui_properties["section_2"]["variable_cannyt"]
 						step: .05
 						on_touch_move: root.set_variables(self)
 				BoxLayout:
@@ -165,7 +167,7 @@
 						id: variable_errorr
 						name: "variable_errorr"
 						range: (0, 90)
-						value: 2
+						value: g.gui_properties["section_2"]["variable_errorr"]
 						step: 1
 						on_touch_move: root.set_variables(self)
 				BoxLayout:
@@ -176,7 +178,7 @@
 						id: variable_errord
 						name: "variable_errord"
 						range: (0, 2)
-						value: .5
+						value: g.gui_properties["section_2"]["variable_errord"]
 						step: .1
 						on_touch_move: root.set_variables(self)
 			BoxLayout:
