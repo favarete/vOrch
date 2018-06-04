@@ -4,7 +4,6 @@ import cv2
 import _global_
 from utils import *
 
-DISTORTION = _global_.gui_properties["section_2"]["variable_sqrdst"]
 SHAPE_RESIZE = 150.0
 
 # VISUAL CONFIGURATION
@@ -26,7 +25,7 @@ def process_frame(contours, img_gray, visible_img):
 		peri = cv2.arcLength(c, True)
 		approx = cv2.approxPolyDP(c, 0.04 * peri, True)
 
-		if is_valid_square(approx, DISTORTION):
+		if is_valid_square(approx, _global_.gui_properties["section_2"]["variable_sqrdst"]):
 			robot_found = False
 			task_found = False
 					

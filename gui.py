@@ -33,27 +33,29 @@ OpenCV Configuration
 '''
 #Camera
 _webcam = 1
-_fps = _global_.gui_properties["section_2"]["variable_fps"]
-_blur = _global_.gui_properties["section_2"]["variable_blur"]
 _resolution = (940, 780)
 
 number_of_robots = 1
-CANNY_THRESHOLD = _global_.gui_properties["section_2"]["variable_cannyt"]
 
 # Find Robots
 #server = Server()
 #server.scan(number_of_robots)
 
 class CameraStream(Image):
-		def __init__(self, fps=_fps, **kwargs):
-			self.fps = fps
+		def __init__(self, **kwargs):
 			super(CameraStream, self).__init__(**kwargs)
 
 			self.webcam = Webcam(_webcam)
 			self.webcam.start()
 			self.webcam.set_resolution(_resolution[0], _resolution[1])
 
-			Clock.schedule_interval(self.update, 1.0 / fps)
+			self.timer = Clock.schedule_interval(self.update, 
+				1.0 / _global_.gui_properties["section_2"]["variable_fps"])
+
+		def reschedule_clock(self):
+			self.timer.cancel()
+			self.timer = Clock.schedule_interval(self.update, 
+				1.0 / _global_.gui_properties["section_2"]["variable_fps"])
 
 		def update(self, dt):
 			img_rgb = self.webcam.get_current_frame()
@@ -71,14 +73,16 @@ class CameraStream(Image):
 			self.canvas.ask_update()
 
 		def get_image_data(self, img):
-
 			img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
-			img_gray_blur = cv2.GaussianBlur(img_gray, (_blur, _blur), 0)
+			img_gray_blur = cv2.GaussianBlur(img_gray, 
+				(_global_.gui_properties["section_2"]["variable_blur"], 
+				 _global_.gui_properties["section_2"]["variable_blur"]), 0)
 			
 			v = np.median(img_gray_blur)
-			low = int(max(0, (1.0 - CANNY_THRESHOLD) * v))
-			high = int(min(255, (1.0 + CANNY_THRESHOLD) * v))
+			low = int(max(0, (1.0 - _global_.gui_properties["section_2"]["variable_cannyt"]) * v))
+			high = int(min(255, (1.0 + _global_.gui_properties["section_2"]["variable_cannyt"]) * v))
 
+			print 'Low is: %s and High is: %s' %(low, high)
 			img_edges = cv2.Canny(img_gray_blur, low, high)
 
 			kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
@@ -113,6 +117,11 @@ class View(GridLayout):
 		filters[instance.name] = instance.active
 
 	def set_variables(self, instance):
+		filters = _global_.gui_properties["section_2"]
+		filters[instance.name] = type(filters[instance.name])(instance.value)
+
+		if instance.name == "variable_fps":
+			self.ids.frame.reschedule_clock()
 		pass
 
 class visualOrchestrator(App):

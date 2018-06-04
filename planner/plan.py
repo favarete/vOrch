@@ -2,10 +2,6 @@ from utils import *
 import numpy as np
 import _global_
 
-ROTATION_ERROR = _global_.gui_properties["section_2"]["variable_errorr"]
-DISTANCE_ERROR = _global_.gui_properties["section_2"]["variable_errord"]
-#robots_available = {}
-
 def make_plan():
 	plan = {}
 	nearby_points = aux_nearby_points(_global_.robots_data, _global_.task_manager["solution_points"])
@@ -14,15 +10,15 @@ def make_plan():
 	for element in _global_.robots_data:
 		if element in needed_rotation:
 			plan[element] = []
-			if needed_rotation[element] >= ROTATION_ERROR:
+			if needed_rotation[element] >= _global_.gui_properties["section_2"]["variable_errorr"]:
 				plan[element].append(("rotateLeft", np.absolute(needed_rotation[element]) ))
-			elif needed_rotation[element] < -ROTATION_ERROR:
+			elif needed_rotation[element] < -_global_.gui_properties["section_2"]["variable_errorr"]:
 				plan[element].append(("rotateRight", np.absolute(needed_rotation[element]) ))
 
 			ru_distance = get_ru_distance(nearby_points[element], 
 										  _global_.robots_data[element]["node"][0], 
 										  _global_.robots_data[element]['diameter'])
-			if ru_distance > DISTANCE_ERROR:
+			if ru_distance > _global_.gui_properties["section_2"]["variable_errord"]:
 				plan[element].append(("moveForward", ru_distance))
 	return plan
 	
