@@ -2,7 +2,7 @@ from utils import *
 import numpy as np
 import _global_
 
-ROTATION_ERROR = 5
+ROTATION_ERROR = 2
 DISTANCE_ERROR = 0.5
 #robots_available = {}
 
