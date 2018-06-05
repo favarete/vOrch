@@ -82,7 +82,6 @@ class CameraStream(Image):
 			low = int(max(0, (1.0 - _global_.gui_properties["section_2"]["variable_cannyt"]) * v))
 			high = int(min(255, (1.0 + _global_.gui_properties["section_2"]["variable_cannyt"]) * v))
 
-			print 'Low is: %s and High is: %s' %(low, high)
 			img_edges = cv2.Canny(img_gray_blur, low, high)
 
 			kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
