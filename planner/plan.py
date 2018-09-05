@@ -1,13 +1,35 @@
 from utils import *
 import numpy as np
+from threading import Thread
 import _global_
+
+def run_planner():
+	if _global_.task_manager["solve_task"] and _global_.task_manager["available_robot"]:
+		if not _global_.task_manager["busy"]:
+			_global_.task_manager["busy"] = True
+			plan = make_plan()
+			_global_.gui_properties["section_4"]["plan"] = plan
+			print plan
+			for r in plan:
+				if len(plan[r]) > 0:
+					Thread(target=_global_.robots_manager[r]["hardware"].run_plan, 
+						   args=(plan[r], 
+						   _global_.robots_manager)).start()
+		else:
+			check = all(value["running_plan"] == False for key, value in _global_.robots_manager.iteritems())
+			if check:
+				_global_.task_manager["busy"] = False
+				_global_.task_manager["solve_task"] = False
+				print "All plans executed!"
+			pass
+
 
 def make_plan():
 	plan = {}
-	nearby_points = aux_nearby_points(_global_.robots_data, _global_.task_manager["solution_points"])
-	needed_rotation = aux_rotate_robots(_global_.robots_data, nearby_points)
+	nearby_points = aux_nearby_points(_global_.robots_manager, _global_.task_manager["solution_points"])
+	needed_rotation = aux_rotate_robots(_global_.robots_manager, nearby_points)
 
-	for element in _global_.robots_data:
+	for element in _global_.robots_manager:
 		if element in needed_rotation:
 			plan[element] = []
 			if needed_rotation[element] >= _global_.gui_properties["section_2"]["variable_errorr"]:
@@ -16,8 +38,8 @@ def make_plan():
 				plan[element].append(("rotateRight", np.absolute(needed_rotation[element]) ))
 
 			ru_distance = get_ru_distance(nearby_points[element], 
-										  _global_.robots_data[element]["node"][0], 
-										  _global_.robots_data[element]['diameter'])
+										  _global_.robots_manager[element]["node"][0], 
+										  _global_.robots_manager[element]['radius'] * 2)
 			if ru_distance > _global_.gui_properties["section_2"]["variable_errord"]:
 				plan[element].append(("moveForward", ru_distance))
 	return plan
