@@ -1,6 +1,8 @@
 from database import SYSTEM_IDS
 import numpy as np
 
+server = None
+
 gui_properties = {
 	"section_1a": { 
 					"filter_borders": False,
@@ -22,6 +24,14 @@ gui_properties = {
 					"variable_cannyt": .7,
 					"variable_errorr": 2,
 					"variable_errord": .5
+	},
+
+	"section_3": {
+					"server": False
+	},
+
+	"section_4": {
+					"plan": "All Plans Executed"
 	}
 
 }
@@ -29,6 +39,7 @@ gui_properties = {
 robots_manager = { identification: {"node": np.empty((2, 2), dtype=int), 
 									"radius": 0,
 							 		"indetified": False,
+							 		"hardware": None,
 							 		"running_plan": False } 
 							 		for identification in SYSTEM_IDS[0] }
 
@@ -37,4 +48,5 @@ task_manager = {"solve_task": False,
 				"task_ID": "",
 				"solution_points":[],
 				"solved_tasks": [],
+				"available_robot": False,
 				"busy_robots": 0  }
