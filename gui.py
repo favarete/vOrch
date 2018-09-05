@@ -15,9 +15,12 @@ from kivy.core.window import Window
 
 import cv2
 import numpy as np
+from threading import Thread
+
 from camera.webcam import Webcam
 from utils import *
-from planner.plan import make_plan
+from communication.network import Server
+from planner.plan import run_planner
 from planner.task import process_frame
 
 '''
@@ -35,12 +38,6 @@ OpenCV Configuration
 _webcam = 1
 _resolution = (940, 780)
 
-number_of_robots = 1
-
-# Find Robots
-#server = Server()
-#server.scan(number_of_robots)
-
 class CameraStream(Image):
 		def __init__(self, **kwargs):
 			super(CameraStream, self).__init__(**kwargs)
@@ -48,7 +45,6 @@ class CameraStream(Image):
 			self.webcam = Webcam(_webcam)
 			self.webcam.start()
 			self.webcam.set_resolution(_resolution[0], _resolution[1])
-
 			self.timer = Clock.schedule_interval(self.update, 
 				1.0 / _global_.gui_properties["section_2"]["variable_fps"])
 
@@ -63,6 +59,8 @@ class CameraStream(Image):
 			frame = process_frame(contours,
 								  img_gray,
 								  visible_img)
+			run_planner()
+			self.parent.parent.show_plan()
 
 			texture = self.texture
 			w, h = frame.shape[1], frame.shape[0]
@@ -115,13 +113,37 @@ class View(GridLayout):
 		filters = _global_.gui_properties["section_1b"]
 		filters[instance.name] = instance.active
 
+	def show_plan(self):
+		self.ids.planner_feedback.text = _global_.gui_properties["section_4"]["plan"]
+
 	def set_variables(self, instance):
 		filters = _global_.gui_properties["section_2"]
 		filters[instance.name] = type(filters[instance.name])(instance.value)
 
 		if instance.name == "variable_fps":
 			self.ids.frame.reschedule_clock()
-		pass
+	
+	def toggle_server(self, instance):
+
+		if instance.state == "down":
+			th = Thread(target=self.server_online)
+			th.daemon = True
+			th.start()
+		else:
+			_global_.server = None
+			_global_.task_manager["available_robot"] = False
+			for robot in _global_.robots_manager:
+				_global_.robots_manager[robot]["hardware"] = None
+
+	def server_online(self, number_of_robots=1):
+		_global_.server = Server()
+		_global_.server.scan(number_of_robots)
+
+		for robot in _global_.robots_manager:
+			_global_.robots_manager[robot]["hardware"] = _global_.server.getRobot(robot[-2:])
+
+		if _global_.server.robotsOnline > 0:
+			_global_.task_manager["available_robot"] = True
 
 class visualOrchestrator(App):
 	def build(self):
