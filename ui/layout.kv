@@ -183,8 +183,27 @@
 						on_value: root.set_variables(self)
 			BoxLayout:
 				orientation: 'horizontal'
-				size_hint: (1, .60)
-				BigTextLabel:
+				size_hint: (1, .20)
+				id: section_3
+				BoxLayout:
+					orientation: 'horizontal'
+					size_hint: (.20, 1)
+					CheckBoxButton:
+						id: toggle_server
+						name: "toggle_server"
+						on_active: root.toggle_server(self)
+						active: g.gui_properties["section_3"]["server"]
+				BoxLayout:
+					orientation: 'horizontal'
+					size_hint: (.80, 1)
+					MediumTextLabel:
+						text: 'placeholder_3'
+			BoxLayout:
+				orientation: 'horizontal'
+				size_hint: (1, .40)
+				id: section_4
+				SmallTextLabel:
+					id: planner_feedback
 					text: 'placeholder_2'
 	SmallTextLabel:
 		size_hint: (1, .03)
