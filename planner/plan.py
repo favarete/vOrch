@@ -21,6 +21,7 @@ def run_planner():
 				_global_.task_manager["busy"] = False
 				_global_.task_manager["solve_task"] = False
 				print "All plans executed!"
+				_global_.gui_properties["section_4"]["plan"] = None
 			pass
 
 
