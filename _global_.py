@@ -31,7 +31,7 @@ gui_properties = {
 	},
 
 	"section_4": {
-					"plan": "All Plans Executed"
+					"plan": None
 	}
 
 }
