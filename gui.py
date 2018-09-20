@@ -118,8 +118,10 @@ class View(GridLayout):
 		else:
 			for key, value in data.iteritems():
 				temp_string1 = "Robot ID " + key[4:] + "\n"
-				temp_string2 = "Plan: Sequence>"
-				temp_string3 = '>'.join(map(str, value))
+				temp_string2 = "Plan: Sequence>>"
+
+				temp_string3 = ''.join([ str(txt) +'\n' if i % 2 == 0
+						 	   else str(txt) + '>' for i, txt in enumerate(value, 1)])
 
 			new_string = temp_string1 + temp_string2 + temp_string3 + "\n\n"
 
