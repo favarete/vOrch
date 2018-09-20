@@ -11,17 +11,22 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.image import Image
 from kivy.graphics.texture import Texture
 from kivy.clock import Clock
+from kivy.core.window import Window
 
 import cv2
 import numpy as np
 
-from multiprocessing import Process
+from threading import Thread
 
 from camera.webcam import Webcam
 from utils import *
 from communication.network import Server
 from planner.plan import run_planner
 from planner.task import process_frame
+
+Window.size = (1245,640)
+Window.left = 60
+Window.top = 60
 
 '''
 OpenCV Configuration
@@ -53,7 +58,7 @@ class CameraStream(Image):
 								  img_gray,
 								  visible_img)
 			run_planner()
-			#self.parent.parent.show_plan()
+			self.parent.parent.show_plan()
 
 			texture = self.texture
 			w, h = frame.shape[1], frame.shape[0]
@@ -106,8 +111,19 @@ class View(GridLayout):
 		filters = _global_.gui_properties["section_1b"]
 		filters[instance.name] = instance.active
 
-	#def show_plan(self):
-	#	self.ids.planner_feedback.text = _global_.gui_properties["section_4"]["plan"]
+	def show_plan(self):
+		data = _global_.gui_properties["section_4"]["plan"]
+		if data == None:
+			new_string = "No Plans to Execute"
+		else:
+			for key, value in data.iteritems():
+				temp_string1 = "Robot ID " + key[4:] + "\n"
+				temp_string2 = "Plan: Sequence>"
+				temp_string3 = '>'.join(map(str, value))
+
+			new_string = temp_string1 + temp_string2 + temp_string3 + "\n\n"
+
+		self.ids.planner_feedback.text = new_string
 
 	def set_variables(self, instance):
 		filters = _global_.gui_properties["section_2"]
@@ -117,19 +133,20 @@ class View(GridLayout):
 			self.ids.frame.reschedule_clock()
 	
 	def toggle_server(self, instance):
-
 		if instance.state == "down":
-			process1 = serverProcess(1)
-			process1.start()
+			instance.text = "Connected"
+			thread1 = serverThread(1)
+			thread1.start()
 		else:
+			instance.text = "Connect"
 			_global_.server = None
 			_global_.task_manager["available_robot"] = False
 			for robot in _global_.robots_manager:
 				_global_.robots_manager[robot]["hardware"] = None
 
-class serverProcess(Process):
-	def __init__(self, number_of_robots=1):
-		Process.__init__(self)
+class serverThread(Thread):
+	def __init__(self, server, number_of_robots=1):
+		super(serverThread, self).__init__()
 		self.daemon = True
 		self.number_of_robots = number_of_robots
 
@@ -146,15 +163,6 @@ class serverProcess(Process):
 
 class visualOrchestrator(App):
 	def build(self):
-		from kivy.core.window import Window
-		'''
-		Import Kivy's "Window" elsewhere will cause 
-		a blank unresponsive new window when using multiprocessing
-		'''
-		Window.size = (1245,640)
-		Window.left = 60
-		Window.top = 60
-
 		self.view = View()
 		self.camera_stream = self.view.ids.frame
 		return self.view
