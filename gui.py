@@ -113,6 +113,7 @@ class View(GridLayout):
 
 	def show_plan(self):
 		data = _global_.gui_properties["section_4"]["plan"]
+		new_string = ''
 		if data == None:
 			new_string = "No Plans to Execute"
 		else:
@@ -123,7 +124,7 @@ class View(GridLayout):
 				temp_string3 = ''.join([ str(txt) +'\n' if i % 2 == 0
 						 	   else str(txt) + '>' for i, txt in enumerate(value, 1)])
 
-			new_string = temp_string1 + temp_string2 + temp_string3 + "\n\n"
+				new_string += temp_string1 + temp_string2 + temp_string3 + "\n"
 
 		self.ids.planner_feedback.text = new_string
 
@@ -137,7 +138,7 @@ class View(GridLayout):
 	def toggle_server(self, instance):
 		if instance.state == "down":
 			instance.text = "Connected"
-			thread1 = serverThread(1)
+			thread1 = serverThread(2)
 			thread1.start()
 		else:
 			instance.text = "Connect"
@@ -147,11 +148,11 @@ class View(GridLayout):
 				_global_.robots_manager[robot]["hardware"] = None
 
 class serverThread(Thread):
-	def __init__(self, server, number_of_robots=1):
+	def __init__(self, number_of_robots):
 		super(serverThread, self).__init__()
 		self.daemon = True
 		self.number_of_robots = number_of_robots
-
+		
 	def run(self):
 		_global_.server = Server()
 		_global_.server.scan(self.number_of_robots)
