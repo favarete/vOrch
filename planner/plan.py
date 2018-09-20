@@ -28,6 +28,7 @@ def run_planner():
 def make_plan():
 	plan = {}
 	nearby_points = aux_nearby_points(_global_.robots_manager, _global_.task_manager["solution_points"])
+	get_check_points(_global_.robots_manager, nearby_points)
 	needed_rotation = aux_rotate_robots(_global_.robots_manager, nearby_points)
 
 	for element in _global_.robots_manager:
@@ -73,3 +74,41 @@ def free_way(state):
 
 def imminent_collision(state):
 	pass
+
+def get_check_points(movable_points, associated_target):
+	info = get_time_steps(movable_points, associated_target)
+	check_points = {}
+	for key, value in info.iteritems():
+		initial_point = value[0][0]
+		final_point = value[0][1]
+
+		check_points[key] = [initial_point]
+
+		for i in range(int(value[1][1])):
+			new_point = get_new_point(initial_point, final_point, value[1][0])
+			check_points[key].append(new_point)
+
+			initial_point = new_point
+	print check_points	
+
+def get_new_point(initial_point, final_point, ru):
+	x0 = initial_point[0]
+	y0 = initial_point[1]
+	x1 = final_point[0]
+	y1 = final_point[1]
+
+	xf = x0 + ru * ( (x1 -x0)/np.sqrt( (x1-x0)**2 + (y1-y0)**2 ) )
+	yf = y0 + ru * ( (y1 -y0)/np.sqrt( (x1-x0)**2 + (y1-y0)**2 ) )
+
+	return [xf, yf]
+
+def get_time_steps(movable_points, associated_target):
+	info = {}
+	for key, value in movable_points.iteritems():
+		if key in associated_target:
+			initial_point = value['node'][0]
+			final_point = associated_target[key]
+			ru = value['radius'] * 2
+			steps = get_ru_distance(final_point, initial_point, ru)
+			info[key] = ((initial_point, final_point), (ru, steps))
+	return info
