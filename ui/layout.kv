@@ -10,7 +10,7 @@
 	rows: 3
 	SmallTextLabel:
 		size_hint: (1, .03)
-		text: 'placeholder_1'
+		text: 'Visual Orchestrator'
 
 	BoxLayout:
 		orientation: "horizontal"
@@ -182,29 +182,45 @@
 						step: .1
 						on_value: root.set_variables(self)
 			BoxLayout:
+				canvas:
+					Color:
+						rgb: (.1, .1, .1)
+					Rectangle:
+						pos: self.pos
+						size: (self.width, self.height - 10)
 				orientation: 'horizontal'
-				size_hint: (1, .20)
+				size_hint: (1, .25)
 				id: section_3
 				BoxLayout:
 					orientation: 'horizontal'
-					size_hint: (.20, 1)
-					CheckBoxButton:
-						id: toggle_server
-						name: "toggle_server"
-						on_active: root.toggle_server(self)
-						active: g.gui_properties["section_3"]["server"]
+					size_hint: (.30, 1)
+					padding: [5, 20, 5, 7]
+					AnchorLayout:
+						SelectButton:
+							id: toggle_server
+							name: "server"
+							on_press: root.toggle_server(self)
+							text: 'Connect'
 				BoxLayout:
 					orientation: 'horizontal'
-					size_hint: (.80, 1)
-					MediumTextLabel:
-						text: 'placeholder_3'
+					size_hint: (.70, 1)
+					padding: [0, 10, 8, 10]
+					canvas:
+						Color:
+							rgb: (0, 0, 0)
+						Rectangle:
+							pos: (self.x, self.y + 8)
+							size: (self.width - 5, self.height - 31)
+					AnchorLayout:
+						SMediumTextLabel:
+							id: planner_feedback
+							text: "No Plans to Execute"
 			BoxLayout:
 				orientation: 'horizontal'
-				size_hint: (1, .40)
+				size_hint: (1, .35)
 				id: section_4
 				SmallTextLabel:
-					id: planner_feedback
-					text: 'placeholder_2'
+					text: "4"
 	SmallTextLabel:
 		size_hint: (1, .03)
 		text: 'placeholder_3'
