@@ -232,9 +232,9 @@ def circle_intersection(circle1, circle2):
 	h = np.sqrt(r1*r1-a*a)
 	xm = x1 + a*dx/d
 	ym = y1 + a*dy/d
-	xs1 = xm + h*dy/d
-	xs2 = xm - h*dy/d
-	ys1 = ym - h*dx/d
-	ys2 = ym + h*dx/d
+	xs1 = int(xm + h*dy/d)
+	xs2 = int(xm - h*dy/d)
+	ys1 = int(ym - h*dx/d)
+	ys2 = int(ym + h*dx/d)
 
 	return (xs1,ys1),(xs2,ys2)

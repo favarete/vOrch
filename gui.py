@@ -152,7 +152,7 @@ class serverThread(Thread):
 		super(serverThread, self).__init__()
 		self.daemon = True
 		self.number_of_robots = number_of_robots
-		
+
 	def run(self):
 		_global_.server = Server()
 		_global_.server.scan(self.number_of_robots)

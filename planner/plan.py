@@ -28,7 +28,7 @@ def run_planner():
 def make_plan():
 	plan = {}
 	nearby_points = aux_nearby_points(_global_.robots_manager, _global_.task_manager["solution_points"])
-	get_check_points(_global_.robots_manager, nearby_points)
+	imminent_collision(_global_.robots_manager, nearby_points)
 	needed_rotation = aux_rotate_robots(_global_.robots_manager, nearby_points)
 
 	for element in _global_.robots_manager:
@@ -72,8 +72,27 @@ def aux_rotate_robots(movable_points, associated_target):
 def free_way(state):
 	pass
 
-def imminent_collision(state):
-	pass
+def imminent_collision(movable_points, associated_target):
+	info = get_check_points(movable_points, associated_target)
+	main_key = ''
+	max_value = 0
+	for key, value in info.iteritems():
+		if value["size"] >= max_value:
+			main_key = key
+			max_value = value["size"]
+	
+	comparator = list(info.keys())
+	comparator.remove(main_key)
+
+	for i in range(len(info[main_key]['points'])):
+		j = i
+		limit = len(info[comparator[0]]) - 1
+		if j >= limit:
+			j = limit
+		collision = circle_intersection(
+			(info[main_key]['points'][i][0], info[main_key]['points'][i][1], info[main_key]["radius"]), 
+			(info[comparator[0]]['points'][j][0], info[comparator[0]]['points'][j][1], info[comparator[0]]["radius"]))
+		print collision
 
 def get_check_points(movable_points, associated_target):
 	info = get_time_steps(movable_points, associated_target)
@@ -82,14 +101,17 @@ def get_check_points(movable_points, associated_target):
 		initial_point = value[0][0]
 		final_point = value[0][1]
 
-		check_points[key] = [initial_point]
+		check_points[key] = {"points": [initial_point], "size": 2, "radius": value[1][0]/2}
 
 		for i in range(int(value[1][1])):
 			new_point = get_new_point(initial_point, final_point, value[1][0])
-			check_points[key].append(new_point)
+			check_points[key]["points"].append(np.array(new_point, dtype=int))
 
 			initial_point = new_point
-	print check_points	
+			check_points[key]["size"] += 1
+
+		check_points[key]["points"].append(np.array(final_point, dtype=int))
+	return check_points	
 
 def get_new_point(initial_point, final_point, ru):
 	x0 = initial_point[0]
