@@ -3,7 +3,7 @@ import numpy as np
 from threading import Thread
 import _global_
 
-collision_avoiding = False
+collision_avoiding = True
 
 def run_planner():
 	if _global_.task_manager["solve_task"] and _global_.task_manager["available_robot"]:
@@ -31,7 +31,8 @@ def make_plan():
 	plan = {}
 	nearby_points = aux_nearby_points(_global_.robots_manager, _global_.task_manager["solution_points"])
 	if collision_avoiding:
-		imminent_collision(_global_.robots_manager, nearby_points)
+		points = imminent_collision(_global_.robots_manager, nearby_points)
+
 	else:
 		needed_rotation = aux_rotate_robots(_global_.robots_manager, nearby_points)
 
@@ -90,6 +91,9 @@ def imminent_collision(movable_points, associated_target):
 
 	n = len(info[main_key]['points'])
 	i = 0
+
+	data = { identification: {"points": [] } for identification in associated_target }
+
 	while i < n:
 		j = i
 		limit = len(info[comparator[0]]) - 1
@@ -128,9 +132,14 @@ def imminent_collision(movable_points, associated_target):
 				del points[min_dist]
 
 			info[main_key]['points'][i] = points.keys()[0]
+			data[main_key]['points'].append(points.keys()[0])
 			i=0
 		else:
 			i+=1
+	data[main_key]['points'].append(associated_target[main_key])
+	data[comparator[0]]['points'].append(associated_target[comparator[0]])
+
+	return data
 
 def get_check_points(movable_points, associated_target):
 	info = get_time_steps(movable_points, associated_target)
