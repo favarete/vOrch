@@ -3,6 +3,8 @@ import numpy as np
 from threading import Thread
 import _global_
 
+collision_avoiding = False
+
 def run_planner():
 	if _global_.task_manager["solve_task"] and _global_.task_manager["available_robot"]:
 		if not _global_.task_manager["busy"]:
@@ -28,22 +30,24 @@ def run_planner():
 def make_plan():
 	plan = {}
 	nearby_points = aux_nearby_points(_global_.robots_manager, _global_.task_manager["solution_points"])
-	imminent_collision(_global_.robots_manager, nearby_points)
-	needed_rotation = aux_rotate_robots(_global_.robots_manager, nearby_points)
+	if collision_avoiding:
+		imminent_collision(_global_.robots_manager, nearby_points)
+	else:
+		needed_rotation = aux_rotate_robots(_global_.robots_manager, nearby_points)
 
-	for element in _global_.robots_manager:
-		if element in needed_rotation:
-			plan[element] = []
-			if needed_rotation[element] >= _global_.gui_properties["section_2"]["variable_errorr"]:
-				plan[element].append(("rotateLeft", np.absolute(needed_rotation[element]) ))
-			elif needed_rotation[element] < -_global_.gui_properties["section_2"]["variable_errorr"]:
-				plan[element].append(("rotateRight", np.absolute(needed_rotation[element]) ))
+		for element in _global_.robots_manager:
+			if element in needed_rotation:
+				plan[element] = []
+				if needed_rotation[element] >= _global_.gui_properties["section_2"]["variable_errorr"]:
+					plan[element].append(("rotateLeft", np.absolute(needed_rotation[element]) ))
+				elif needed_rotation[element] < -_global_.gui_properties["section_2"]["variable_errorr"]:
+					plan[element].append(("rotateRight", np.absolute(needed_rotation[element]) ))
 
-			ru_distance = get_ru_distance(nearby_points[element], 
-										  _global_.robots_manager[element]["node"][0], 
-										  _global_.robots_manager[element]['radius'] * 2)
-			if ru_distance > _global_.gui_properties["section_2"]["variable_errord"]:
-				plan[element].append(("moveForward", ru_distance))
+				ru_distance = get_ru_distance(nearby_points[element], 
+											  _global_.robots_manager[element]["node"][0], 
+											  _global_.robots_manager[element]['radius'] * 2)
+				if ru_distance > _global_.gui_properties["section_2"]["variable_errord"]:
+					plan[element].append(("moveForward", ru_distance))
 	return plan
 	
 def aux_nearby_points(movable_points, target_points):
@@ -84,7 +88,9 @@ def imminent_collision(movable_points, associated_target):
 	comparator = list(info.keys())
 	comparator.remove(main_key)
 
-	for i in range(len(info[main_key]['points'])):
+	n = len(info[main_key]['points'])
+	i = 0
+	while i < n:
 		j = i
 		limit = len(info[comparator[0]]) - 1
 		if j >= limit:
@@ -92,7 +98,39 @@ def imminent_collision(movable_points, associated_target):
 		collision = circle_intersection(
 			(info[main_key]['points'][i][0], info[main_key]['points'][i][1], info[main_key]["radius"]), 
 			(info[comparator[0]]['points'][j][0], info[comparator[0]]['points'][j][1], info[comparator[0]]["radius"]))
-		print collision
+		if collision != None:
+			midpoint = get_midpoint(collision[0], collision[1])
+			ru = info[main_key]['radius'] * 2
+			
+			p1 = get_extended_point(midpoint[0], midpoint[1], 
+									collision[0][0], collision[0][1], 
+									ru)
+			p2 = get_extended_point(midpoint[0], midpoint[1], 
+									collision[1][0], collision[1][1], 
+									ru)
+			p3 = get_extended_point(midpoint[0], midpoint[1], 
+									info[main_key]['points'][i][0], info[main_key]['points'][i][1], 
+									ru)
+
+			dest = info[main_key]['points'][-1]
+
+			a = get_euclidean_distance(p1[0], p1[1], dest[0], dest[1])
+			b = get_euclidean_distance(p2[0], p2[1], dest[0], dest[1])
+			c = get_euclidean_distance(p3[0], p3[1], dest[0], dest[1])
+
+			points = {p1: a, p2: b, p3: c}
+
+			max_dist = max(points, key=lambda x: points.get(x))
+			if points.has_key(max_dist):
+				del points[max_dist]
+			min_dist = min(points, key=lambda x: points.get(x))
+			if points.has_key(min_dist):
+				del points[min_dist]
+
+			info[main_key]['points'][i] = points.keys()[0]
+			i=0
+		else:
+			i+=1
 
 def get_check_points(movable_points, associated_target):
 	info = get_time_steps(movable_points, associated_target)

@@ -238,3 +238,10 @@ def circle_intersection(circle1, circle2):
 	ys2 = int(ym + h*dx/d)
 
 	return (xs1,ys1),(xs2,ys2)
+
+
+def get_midpoint(p1, p2):
+	x = int((p1[0] + p2[0])/2)
+	y = int((p1[1] + p2[1])/2)
+	return (x, y)
+	
