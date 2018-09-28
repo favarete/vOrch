@@ -11,7 +11,6 @@ def run_planner():
 			_global_.task_manager["busy"] = True
 			plan = make_plan()
 			_global_.gui_properties["section_4"]["plan"] = plan
-			print plan
 			for r in plan:
 				if len(plan[r]) > 0:
 					Thread(target=_global_.robots_manager[r]["hardware"].run_plan, 
@@ -22,7 +21,6 @@ def run_planner():
 			if check:
 				_global_.task_manager["busy"] = False
 				_global_.task_manager["solve_task"] = False
-				print "All plans executed!"
 				_global_.gui_properties["section_4"]["plan"] = None
 			pass
 
@@ -33,6 +31,30 @@ def make_plan():
 	if collision_avoiding:
 		points = imminent_collision(_global_.robots_manager, nearby_points)
 
+		for element in _global_.robots_manager:
+			start = _global_.robots_manager[element]["node"]
+			plan[element] = []
+
+			for i in range(len(points[element]['points'])):
+				target = points[element]['points'][i]
+				needed_rotation = angle_to_target(start[0], start[1], target)
+
+				if needed_rotation >= _global_.gui_properties["section_2"]["variable_errorr"]:
+					plan[element].append(("rotateLeft", np.absolute(needed_rotation) ))
+				elif needed_rotation < -_global_.gui_properties["section_2"]["variable_errorr"]:
+					plan[element].append(("rotateRight", np.absolute(needed_rotation) ))
+
+				ru_distance = get_ru_distance(target, 
+											  _global_.robots_manager[element]["node"][0], 
+											  _global_.robots_manager[element]['radius'] * 2)
+				if ru_distance > _global_.gui_properties["section_2"]["variable_errord"]:
+					plan[element].append(("moveForward", ru_distance))
+
+				rotated_front = rotate_around_point(start[0], start[1], needed_rotation)
+				new_front = get_extended_point(rotated_front[0], rotated_front[1],
+											   target[0], target[1], 
+											   ru_distance * _global_.robots_manager[element]['radius'] * 2)
+				start = [target, new_front]
 	else:
 		needed_rotation = aux_rotate_robots(_global_.robots_manager, nearby_points)
 
@@ -49,6 +71,7 @@ def make_plan():
 											  _global_.robots_manager[element]['radius'] * 2)
 				if ru_distance > _global_.gui_properties["section_2"]["variable_errord"]:
 					plan[element].append(("moveForward", ru_distance))
+	print plan
 	return plan
 	
 def aux_nearby_points(movable_points, target_points):
@@ -93,15 +116,15 @@ def imminent_collision(movable_points, associated_target):
 	i = 0
 
 	data = { identification: {"points": [] } for identification in associated_target }
-
 	while i < n:
 		j = i
-		limit = len(info[comparator[0]]) - 1
+		limit = len(info[comparator[0]]['points']) - 1
 		if j >= limit:
 			j = limit
 		collision = circle_intersection(
 			(info[main_key]['points'][i][0], info[main_key]['points'][i][1], info[main_key]["radius"]), 
 			(info[comparator[0]]['points'][j][0], info[comparator[0]]['points'][j][1], info[comparator[0]]["radius"]))
+
 		if collision != None:
 			midpoint = get_midpoint(collision[0], collision[1])
 			ru = info[main_key]['radius'] * 2
