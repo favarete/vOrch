@@ -31,7 +31,8 @@ gui_properties = {
 	},
 
 	"section_4": {
-					"plan": None
+					"plan": None,
+					"points": []
 	}
 
 }
