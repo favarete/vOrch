@@ -8,10 +8,14 @@ import _global_
 
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
 from kivy.graphics.texture import Texture
 from kivy.clock import Clock
 from kivy.core.window import Window
+from kivy.graphics.vertex_instructions import (Ellipse, Line, Rectangle)
+from kivy.graphics.context_instructions import Color
+from kivy.graphics.scissor_instructions import (ScissorPush, ScissorPop)
 
 import cv2
 import numpy as np
@@ -116,9 +120,10 @@ class View(GridLayout):
 		new_string = ''
 		if data == None:
 			new_string = "No Plans to Execute"
+			_global_.gui_properties['section_4']['points'] = []
 		else:
 			for key, value in data.iteritems():
-				temp_string1 = "Robot ID " + key[4:] + "\n"
+				temp_string1 = "\nRobot ID " + key[4:] + "\n"
 				temp_string2 = "Plan: Sequence>>"
 
 				temp_string3 = ''.join([ str(txt) +'\n' if i % 2 == 0
@@ -163,6 +168,114 @@ class serverThread(Thread):
 			_global_.robots_manager[robot]["hardware"] = _global_.server.getRobot(robot[-2:])
 		if _global_.server.robotsOnline > 0:
 			_global_.task_manager["available_robot"] = True
+
+class PlanView(AnchorLayout):
+	def __init__(self, **kwargs):
+		super(PlanView, self).__init__(**kwargs)
+		self.timer = Clock.schedule_interval(self.update, 1.0 /24)
+
+		self.windowX = Window.size[0]
+		self.windowY = Window.size[1]
+		self.x0 = 840
+		self.y0 = 210
+		self.x1 = 1225
+		self.y1 = 25
+		self.refx0 = 10
+		self.refx1 = 810
+		self.refy0 = 618
+		self.refy1 = 20
+
+	def update(self, *args):
+		data = self.extract_points(_global_.gui_properties['section_4']['points'])
+		self.draw_lines(data)
+
+	def extract_points(self, dict_data):
+		data = []
+		for each in dict_data:
+			aux1 = dict_data[each]['points']
+			aux2 = []
+			for i in _global_.robots_manager[each]["node"][0]:
+				aux2.append(i)
+			for i in aux1:
+				for j in i:
+					aux2.append(j)
+			data.append(aux2)
+		for i in data:
+			for j in range(len(i)):
+				if j % 2 != 0:
+					value = 720 - i[j]
+					i[j] = self.change_size(value, 'y')
+				else:
+					i[j] = self.change_size(i[j], 'x')
+		return data
+
+	def change_size(self, value, axis):
+		old_rangeX = self.refx1 - self.refx0
+		old_rangeY = self.refy1 - self.refy0
+		
+		new_value = 0
+		if (axis == 'x'):
+			if (old_rangeX == 0):
+				new_value = self.x0
+			else:
+				new_range = self.x1 - self.x0
+				new_value = (((value - self.refx0) * new_range) / old_rangeX) + self.x0
+		elif (axis == 'y'):
+			if (old_rangeX == 0):
+				new_value = self.y0
+			else:
+				new_range = self.y1 - self.y0
+				new_value = (((value - self.refy0) * new_range) / old_rangeY) + self.y0
+		return new_value
+
+	def draw_lines(self, data):
+		self.canvas.after.clear()
+		self.canvas.clear()
+
+		self.inner_radius = 30
+		self.outer_radius = 33
+
+		with self.canvas:
+			self.rect1 = Rectangle(pos=[self.x, self.y - 8], 
+								   size=[self.width, self.height - 2],
+								   color=Color(.1, .1, .1))
+			self.rect2 = Rectangle(pos=[self.x + 15, self.y + 5], 
+								   size=[self.width - 30, self.height - 30],
+								   color=Color(0, 0, 0))
+		for i in range(len(data)):
+			with self.canvas.after:
+				ScissorPush(x=int(self.x + 15), y=int(self.y + 5),
+							width=int(self.width - 30), height=int(self.height - 30))
+
+				self.color = Color(.22, .71 * i, .91)
+				self.line = Line(points=data[i],
+								 close=False,
+								 width = 2)
+				for j,k in zip(data[i][0::2], data[i][1::2]):
+					self.color = Color(.22, .71 * i, .91)
+					self.el0 = Ellipse(pos=(j - self.inner_radius/2, 
+											k - self.inner_radius/2), 
+											size=(self.inner_radius,
+											self.inner_radius))
+					self.color = Color(.1, .1, .1)
+					self.el1 = Ellipse(pos=(j - self.inner_radius * .45, 
+											k - self.inner_radius * .45), 
+											size=(self.inner_radius *.9, 
+											self.inner_radius * .9))
+					self.color = Color(.22, .71 * i, .91)
+					self.el = Ellipse(pos=(j - self.inner_radius*.25, 
+										   k - self.inner_radius*.25), 
+										   size=(self.inner_radius *.5,
+										   self.inner_radius*.5))
+					self.el0 = Line(circle=(j, k, self.outer_radius))
+				ScissorPop()
+
+		self.x0 = self.rect2.pos[0]
+		self.y0 = self.rect2.size[1]
+		self.x1 = self.x0 + self.rect2.size[0] - 80
+		self.y1 = self.rect2.pos[1] + 20
+
+
 
 class visualOrchestrator(App):
 	def build(self):
