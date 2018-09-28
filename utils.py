@@ -244,4 +244,16 @@ def get_midpoint(p1, p2):
 	x = int((p1[0] + p2[0])/2)
 	y = int((p1[1] + p2[1])/2)
 	return (x, y)
+
+def rotate_around_point(origin, point, angle):
 	
+	if angle < 0:
+		angle += 360
+	radians = np.deg2rad(angle*-1)
+	x0, y0 = point
+	xc, yc = origin
+
+	qx = (x0 - xc) * np.cos(radians) - (y0 - yc) * np.sin(radians) + xc
+	qy = (x0 - xc) * np.sin(radians) + (y0 - yc) * np.cos(radians) + yc
+
+	return [qx, qy]
