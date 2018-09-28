@@ -30,6 +30,7 @@ def make_plan():
 	nearby_points = aux_nearby_points(_global_.robots_manager, _global_.task_manager["solution_points"])
 	if collision_avoiding:
 		points = imminent_collision(_global_.robots_manager, nearby_points)
+		_global_.gui_properties['section_4']['points'] = points
 
 		for element in _global_.robots_manager:
 			start = _global_.robots_manager[element]["node"]
@@ -110,7 +111,8 @@ def imminent_collision(movable_points, associated_target):
 			max_value = value["size"]
 	
 	comparator = list(info.keys())
-	comparator.remove(main_key)
+	if main_key in comparator:
+		comparator.remove(main_key)
 
 	n = len(info[main_key]['points'])
 	i = 0
