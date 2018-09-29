@@ -41,7 +41,8 @@ robots_manager = { identification: {"node": np.empty((2, 2), dtype=int),
 									"radius": 0,
 							 		"indetified": False,
 							 		"hardware": None,
-							 		"running_plan": False } 
+							 		"running_plan": False,
+							 		"battery": "" } 
 							 		for identification in SYSTEM_IDS[0] }
 
 task_manager = {"solve_task": False,
