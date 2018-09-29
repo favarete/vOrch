@@ -9,14 +9,19 @@ SHAPE_RESIZE = 150.0
 # VISUAL CONFIGURATION
 FONT_BIG = cv2.FONT_HERSHEY_SIMPLEX	
 TEXT_SIZE_BIG = 0.6
+TEXT_SIZE_MEDIUM = 0.4
 DIMENSIONS_COLOR = (70, 255, 110)
 FONT_COLOR = (255, 55, 0)
 FONT_COLOR_TASK = (70, 90, 255)
 BOLD = 2
+THIN = 1
 DOT_SIZE = 7
 TASK_COLOR = (70, 80, 255)
 SOLUTION_COLOR = (255, 255, 0)
 LINE_THICKNESS = 4 
+
+BAD_STATUS_COLOR = (10, 10, 255)
+GOOD_STATUS_COLOR = (10, 255, 10)
 
 def process_frame(contours, img_gray, visible_img):
 
@@ -66,6 +71,37 @@ def process_frame(contours, img_gray, visible_img):
 										FONT_COLOR, 
 										BOLD, 
 										cv2.LINE_AA)
+							battery_feedback = _global_.robots_manager[key]["battery"].splitlines()
+
+							if len(battery_feedback) > 0:
+								color = None
+								if battery_feedback[0] == "Good":
+									color = GOOD_STATUS_COLOR
+								else:
+									color = BAD_STATUS_COLOR
+								cv2.putText(visible_img,
+										battery_feedback[0],
+										(cX - 5, cY), 
+										FONT_BIG, 
+										TEXT_SIZE_MEDIUM, 
+										color, 
+										THIN, 
+										cv2.LINE_AA)
+
+								if battery_feedback[1] == "Good":
+									color = GOOD_STATUS_COLOR
+								else:
+									color = BAD_STATUS_COLOR
+								cv2.putText(visible_img,
+										battery_feedback[1],
+										(cX - 5, cY + 15), 
+										FONT_BIG, 
+										TEXT_SIZE_MEDIUM, 
+										color, 
+										THIN, 
+										cv2.LINE_AA)
+
+							
 						break
 				if robot_found:
 					break
