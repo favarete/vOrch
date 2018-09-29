@@ -2,6 +2,7 @@ from urllib2 import Request
 import urllib2
 import socket
 import register
+import _global_
 
 CACHE_ADDRESS = "communication/cache.txt"
 TIMEOUT_VALUE = 5
@@ -23,7 +24,7 @@ class SendCommand():
         try:
             html = urllib2.urlopen("http://"+self.IP+":8888/rotateLeft"+self.formatString(value), timeout=TIMEOUT_VALUE)
             html = html.read().decode()
-            print html
+            _global_.robots_manager["ID::00" + self.ID]["battery"] = html
         except urllib2.URLError, e:
             print "Problem communicating with robot:"
             print e
@@ -34,7 +35,7 @@ class SendCommand():
         try:
             html = urllib2.urlopen("http://"+self.IP+":8888/rotateRight"+self.formatString(value), timeout=TIMEOUT_VALUE)
             html = html.read().decode()
-            print html
+            _global_.robots_manager["ID::00" + self.ID]["battery"] = html
         except urllib2.URLError, e:
             print "Problem communicating with robot:"
             print e
@@ -45,7 +46,7 @@ class SendCommand():
         try:
             html = urllib2.urlopen("http://"+self.IP+":8888/moveForward"+self.formatString(value), timeout=TIMEOUT_VALUE)
             html = html.read().decode()
-            print html
+            _global_.robots_manager["ID::00" + self.ID]["battery"] = html
         except urllib2.URLError, e:
             print "Problem communicating with robot:"
             print e
@@ -56,7 +57,7 @@ class SendCommand():
         try:
             html = urllib2.urlopen("http://"+self.IP+":8888/moveBack"+self.formatString(value), timeout=TIMEOUT_VALUE)
             html = html.read().decode()
-            print html
+            _global_.robots_manager["ID::00" + self.ID]["battery"] = html
         except urllib2.URLError, e:
             print "Problem communicating with robot:"
             print e
@@ -67,7 +68,7 @@ class SendCommand():
         try:
             html = urllib2.urlopen("http://"+self.IP+":8888/invert", timeout=TIMEOUT_VALUE)
             html = html.read().decode()
-            print html
+            _global_.robots_manager["ID::00" + self.ID]["battery"] = html
         except urllib2.URLError, e:
             print "Problem communicating with robot:"
             print e
@@ -78,7 +79,7 @@ class SendCommand():
         try:
             html = urllib2.urlopen("http://"+self.IP+":8888/shiftUp", timeout=TIMEOUT_VALUE)
             html = html.read().decode()
-            print html
+            _global_.robots_manager["ID::00" + self.ID]["battery"] = html
         except urllib2.URLError, e:
             print "Problem communicating with robot:"
             print e
@@ -89,7 +90,7 @@ class SendCommand():
         try:
             html = urllib2.urlopen("http://"+self.IP+":8888/shiftDown", timeout=TIMEOUT_VALUE)
             html = html.read().decode()
-            print html
+            _global_.robots_manager["ID::00" + self.ID]["battery"] = html
         except urllib2.URLError, e:
             print "Problem communicating with robot:"
             print e
@@ -100,7 +101,7 @@ class SendCommand():
         try:
             html = urllib2.urlopen("http://"+self.IP+":8888/configDelay"+self.formatString(value), timeout=TIMEOUT_VALUE)
             html = html.read().decode()
-            print html
+            _global_.robots_manager["ID::00" + self.ID]["battery"] = html
         except urllib2.URLError, e:
             print "Problem communicating with robot:"
             print e
@@ -111,7 +112,7 @@ class SendCommand():
         try:
             html = urllib2.urlopen("http://"+self.IP+":8888/configStopValue"+self.formatString(value), timeout=TIMEOUT_VALUE)
             html = html.read().decode()
-            print html
+            _global_.robots_manager["ID::00" + self.ID]["battery"] = html
         except urllib2.URLError, e:
             print "Problem communicating with robot:"
             print e
@@ -122,7 +123,7 @@ class SendCommand():
         try:
             html = urllib2.urlopen("http://"+self.IP+":8888/configDegreeValue"+self.formatString(value), timeout=TIMEOUT_VALUE)
             html = html.read().decode()
-            print html
+            _global_.robots_manager["ID::00" + self.ID]["battery"] = html
         except urllib2.URLError, e:
             print "Problem communicating with robot:"
             print e
