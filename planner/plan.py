@@ -13,9 +13,11 @@ def run_planner():
 			_global_.gui_properties["section_4"]["plan"] = plan
 			for r in plan:
 				if len(plan[r]) > 0:
-					Thread(target=_global_.robots_manager[r]["hardware"].run_plan, 
-						   args=(plan[r], 
-						   _global_.robots_manager)).start()
+					robot = _global_.robots_manager[r]["hardware"]
+					if robot is not None:
+						Thread(target=robot.run_plan, 
+							   args=(plan[r], 
+							   _global_.robots_manager)).start()
 		else:
 			check = all(value["running_plan"] == False for key, value in _global_.robots_manager.iteritems())
 			if check:
@@ -28,6 +30,12 @@ def run_planner():
 def make_plan():
 	plan = {}
 	nearby_points = aux_nearby_points(_global_.robots_manager, _global_.task_manager["solution_points"])
+	
+	if _global_.NUMBER_OF_ROBOTS > 1:
+		collision_avoiding = True
+	else:
+		collision_avoiding = False
+
 	if collision_avoiding:
 		points = imminent_collision(_global_.robots_manager, nearby_points)
 		_global_.gui_properties['section_4']['points'] = points
@@ -57,6 +65,15 @@ def make_plan():
 											   ru_distance * _global_.robots_manager[element]['radius'] * 2)
 				start = [target, new_front]
 	else:
+		points = {}
+
+		for key, value in nearby_points.iteritems():
+			points[key] = {"points": []}
+			points[key]["points"].append(_global_.robots_manager[key]["node"][0])
+			points[key]["points"].append(value)
+
+		_global_.gui_properties['section_4']['points'] = points
+
 		needed_rotation = aux_rotate_robots(_global_.robots_manager, nearby_points)
 
 		for element in _global_.robots_manager:
@@ -72,7 +89,6 @@ def make_plan():
 											  _global_.robots_manager[element]['radius'] * 2)
 				if ru_distance > _global_.gui_properties["section_2"]["variable_errord"]:
 					plan[element].append(("moveForward", ru_distance))
-	print plan
 	return plan
 	
 def aux_nearby_points(movable_points, target_points):
