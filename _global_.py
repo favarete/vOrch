@@ -2,6 +2,7 @@ from database import SYSTEM_IDS
 import numpy as np
 
 server = None
+NUMBER_OF_ROBOTS = 1
 
 gui_properties = {
 	"section_1a": { 
