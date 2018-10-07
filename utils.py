@@ -257,3 +257,12 @@ def rotate_around_point(origin, point, angle):
 	qy = (x0 - xc) * np.sin(radians) + (y0 - yc) * np.cos(radians) + yc
 
 	return [qx, qy]
+
+def prepare_glyph(code):
+    glyph = [code]
+    glyph_pos = code
+    for i in range(3):
+        mat = np.reshape(glyph_pos,(3,-1))
+        glyph_pos = np.reshape(np.rot90(mat, 3),(-1,)).tolist()
+        glyph.append(glyph_pos)
+    return glyph
