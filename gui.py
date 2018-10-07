@@ -32,9 +32,6 @@ Window.size = (1245,640)
 Window.left = 60
 Window.top = 60
 
-
-NUMBER_OF_ROBOTS = 2
-
 '''
 OpenCV Configuration
 '''
@@ -146,7 +143,7 @@ class View(GridLayout):
 	def toggle_server(self, instance):
 		if instance.state == "down":
 			instance.text = "Connected"
-			thread1 = serverThread(NUMBER_OF_ROBOTS)
+			thread1 = serverThread(_global_.NUMBER_OF_ROBOTS)
 			thread1.start()
 		else:
 			instance.text = "Connect"
