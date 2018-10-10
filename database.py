@@ -7,7 +7,7 @@ PATTERN = { "ID::0000": prepare_glyph([0, 1, 0, 0, 1, 0, 0, 0, 0]),
 }
 
 TASK = { 
-		 "ID::C": { "matrix": prepare_glyph([0, 1, 1, 1, 0, 0, 0, 1, 1]),
+		 "ID::B": { "matrix": prepare_glyph([0, 1, 1, 1, 0, 0, 0, 1, 1]),
 				    "difficult": 2,
 				    "dimension": 200
 				  },
