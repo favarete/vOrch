@@ -45,7 +45,7 @@ int board_battery_max_digital_value = 16000;
 float board_battery_max_divider_voltage = 3.0;
 
 //Robot Identification
-const char* ROBOT_ID = "00";
+const char* ROBOT_ID = "01";
 
 //WiFi Configuration
 WiFiServer server(8888);
@@ -94,12 +94,16 @@ void setup() {
   pinMode(BATTERY_READ, OUTPUT);
   ads.begin();
 
-  //Initializing Servo
-  
-  leftServo.attach(D4);
-  rightServo.attach(D3);
-  
-  timedelay = 871;
+  if (ROBOT_ID == "00"){
+    timedelay = 871;
+    leftServo.attach(D4);
+    rightServo.attach(D3);
+  }
+  else if (ROBOT_ID == "01"){
+    timedelay = 790;
+    leftServo.attach(D3);
+    rightServo.attach(D4);
+  }
   velocity = 1;
   stopped = 89;
   degree = 15;
