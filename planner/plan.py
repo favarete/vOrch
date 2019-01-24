@@ -114,9 +114,6 @@ def aux_rotate_robots(movable_points, associated_target):
 			result[key] = angle_to_target(value["node"][0], value["node"][1], associated_target[key])
 	return result
 
-def free_way(state):
-	pass
-
 def imminent_collision(movable_points, associated_target):
 	info = get_check_points(movable_points, associated_target)
 	main_key = ''
@@ -218,7 +215,8 @@ def get_time_steps(movable_points, associated_target):
 		if key in associated_target:
 			initial_point = value['node'][0]
 			final_point = associated_target[key]
-			ru = value['radius'] * 2
+			#ru = value['radius'] * 2
+			ru = value['radius']
 			steps = get_ru_distance(final_point, initial_point, ru)
 			info[key] = ((initial_point, final_point), (ru, steps))
 	return info

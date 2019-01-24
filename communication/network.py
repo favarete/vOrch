@@ -161,7 +161,7 @@ class Server():
         while(i<=len(ips)-1):
             try:
                 print "Try to get http://"+ips[i]+":8888/getid"
-                html = urllib2.urlopen("http://"+ips[i]+":8888/getid", timeout=0.5)
+                html = urllib2.urlopen("http://"+ips[i]+":8888/getid", timeout=1)
                 html = html.read().decode()
                 print html
                 html = html.split('-')
@@ -184,7 +184,7 @@ class Server():
         while(i<=244):
             try:
                 print "Try to get http://"+self.host+"."+str(i)+":8888/getid"
-                html = urllib2.urlopen("http://"+self.host+"."+str(i)+":8888/getid", timeout=0.1)
+                html = urllib2.urlopen("http://"+self.host+"."+str(i)+":8888/getid", timeout=0.5)
             except urllib2.URLError:
                 pass
             i = i+1
@@ -194,7 +194,7 @@ class Server():
         while(i<=244):
             try:
                 print "Try to get http://"+self.host+"."+str(i)+":8888/getid"
-                html = urllib2.urlopen("http://"+self.host+"."+str(i)+":8888/getid", timeout=0.1)
+                html = urllib2.urlopen("http://"+self.host+"."+str(i)+":8888/getid", timeout=0.5)
                 html = html.read().decode()
                 print html
                 html = html.split('-')
